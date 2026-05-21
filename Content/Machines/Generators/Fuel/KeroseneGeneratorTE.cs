@@ -49,7 +49,7 @@ public class KeroseneGeneratorTE : GeneratorTE
 
     public override void MachineUpdate()
     {
-        if (!PoweredOn)
+        if (!IsOnFrame)
         {
             bool fuelFound = false;
 
@@ -66,7 +66,7 @@ public class KeroseneGeneratorTE : GeneratorTE
                 }
             }
 
-            if (fuelFound && !ManuallyTurnedOff)
+            if (fuelFound && IsEnabledByPlayer)
             {
                 TurnOn(automatic: true);
             }
@@ -74,7 +74,7 @@ public class KeroseneGeneratorTE : GeneratorTE
 
         if (ConsumedItem.type == ItemID.None)
         {
-            if (PoweredOn)
+            if (IsOnFrame)
             {
                 burnTimer = 0;
                 foreach (Item item in Inventory)

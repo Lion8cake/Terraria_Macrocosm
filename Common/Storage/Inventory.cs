@@ -388,7 +388,7 @@ public partial class Inventory : IEnumerable<Item>
 
         if (item.stack > 0)
         {
-            for (int j = 0; j < Size; j++)
+            for (int j = startIndex; j <= Math.Min(Size - 1, endIndex ?? Size - 1); j++)
             {
                 if (!uiItemSlots[j].CanInteractWithItem)
                     continue;

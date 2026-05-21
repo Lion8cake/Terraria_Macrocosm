@@ -21,7 +21,7 @@ public class Chalcedony : ModTile
         Main.tileLighted[Type] = true;
 
         TileID.Sets.ChecksForMerge[Type] = true;
-     
+        Basalt.TileMerge[Type] = true;
 
         TileID.Sets.CanBeClearedDuringOreRunner[Type] = true;
 
@@ -42,6 +42,7 @@ public class Chalcedony : ModTile
     }
     public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight)
     {
+        WorldGen.TileMergeAttempt(-2, ModContent.TileType<Basalt>(), ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
         WorldGen.TileMergeAttemptFrametest(i, j, Type, TileMerge, ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
     }
     public override bool CanExplode(int i, int j)

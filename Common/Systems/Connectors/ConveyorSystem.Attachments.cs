@@ -51,24 +51,57 @@ public partial class ConveyorSystem
     private static void ClearDroppers() => ClearAttachments();
     private static void ClearHoppers() => ClearAttachments();
 
+    public static bool HasAttachment(Point targetCoords) => HasAttachment(targetCoords.X, targetCoords.Y);
+    public static bool HasAttachment(Point16 targetCoords) => HasAttachment(targetCoords.X, targetCoords.Y);
+    public static bool HasAttachment(int x, int y)
+    {
+        return WorldGen.InWorld(x, y) && Main.tile[x, y].Get<ConveyorData>().Attachment;
+    }
+
     public static bool PlaceDropper(Point targetCoords, bool sync = true) => PlaceDropper(targetCoords.X, targetCoords.Y, sync);
     public static bool PlaceDropper(Point16 targetCoords, bool sync = true) => PlaceDropper(targetCoords.X, targetCoords.Y, sync);
     public static bool PlaceDropper(int x, int y, bool sync = true)
+    {
+        return TryPlaceAttachment(x, y, isHopper: false, replaceExisting: false, dropPrevious: false, sync);
+    }
+
+    public static bool PlaceHopper(Point targetCoords, bool sync = true) => PlaceHopper(targetCoords.X, targetCoords.Y, sync);
+    public static bool PlaceHopper(Point16 targetCoords, bool sync = true) => PlaceHopper(targetCoords.X, targetCoords.Y, sync);
+    public static bool PlaceHopper(int x, int y, bool sync = true)
+    {
+        return TryPlaceAttachment(x, y, isHopper: true, replaceExisting: false, dropPrevious: false, sync);
+    }
+
+    public static bool TryPlaceOrSwapAttachment(Point targetCoords, bool isHopper, bool sync = true)
+        => TryPlaceAttachment(targetCoords.X, targetCoords.Y, isHopper, replaceExisting: true, dropPrevious: true, sync);
+
+    private static bool TryPlaceAttachment(int x, int y, bool isHopper, bool replaceExisting, bool dropPrevious, bool sync)
     {
         if (!WorldGen.InWorld(x, y))
             return false;
 
         ref var data = ref Main.tile[x, y].Get<ConveyorData>();
         if (data.Attachment)
-            return false; // mutually exclusive; already has an attachment
+        {
+            if (!replaceExisting || data.AttachmentIsHopper == isHopper)
+                return false;
 
-        data.Dropper = true; // sets Attachment and type
+            if (dropPrevious && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int itemType = data.AttachmentIsHopper ? ModContent.ItemType<Hopper>() : ModContent.ItemType<Dropper>();
+                Item.NewItem(new EntitySource_TileBreak(x, y, "Conveyor"), new Vector2(x * 16 + 8, y * 16 + 8), itemType);
+            }
+        }
+
+        data.Attachment = true;
+        data.AttachmentIsHopper = isHopper;
         data.AttachmentRotation = (byte)AttachmentOrientation.Down;
 
         Point16 pos = new(x, y);
-        attachmentStates[pos] = new AttachmentState(DropperCooldownTicks);
+        attachmentStates[pos] = new AttachmentState(isHopper ? HopperCooldownTicks : DropperCooldownTicks);
 
         DustEffects(x, y);
+        PlayPlaceSound(x, y);
 
         if (sync && Main.netMode != NetmodeID.SinglePlayer)
             SyncConveyor(x, y, dustEffects: true);
@@ -78,29 +111,25 @@ public partial class ConveyorSystem
         return true;
     }
 
-    public static bool PlaceHopper(Point targetCoords, bool sync = true) => PlaceHopper(targetCoords.X, targetCoords.Y, sync);
-    public static bool PlaceHopper(Point16 targetCoords, bool sync = true) => PlaceHopper(targetCoords.X, targetCoords.Y, sync);
-    public static bool PlaceHopper(int x, int y, bool sync = true)
+    public static bool TryRotateAttachment(Point targetCoords, bool sync = true) => TryRotateAttachment(targetCoords.X, targetCoords.Y, sync);
+
+    public static bool TryRotateAttachment(int x, int y, bool sync = true)
     {
         if (!WorldGen.InWorld(x, y))
             return false;
 
         ref var data = ref Main.tile[x, y].Get<ConveyorData>();
-        if (data.Attachment)
-            return false; // mutually exclusive; already has an attachment
-
-        data.Hopper = true; // sets Attachment and type
-        data.AttachmentRotation = (byte)AttachmentOrientation.Down;
+        if (!data.Attachment)
+            return false;
 
         Point16 pos = new(x, y);
-        attachmentStates[pos] = new AttachmentState(HopperCooldownTicks);
+        AttachmentOrientation next = NextOrientation(GetAttachmentOrientation(pos));
+        ApplyAttachmentOrientation(pos, next);
 
-        DustEffects(x, y);
+        SoundEngine.PlaySound(SoundID.MenuTick with { Volume = 0.6f }, pos.ToWorldCoordinates(8f, 8f));
 
         if (sync && Main.netMode != NetmodeID.SinglePlayer)
-            SyncConveyor(x, y, dustEffects: true);
-
-        buildTimer = (int)ServerConfig.Instance.CircuitSolveUpdateRate;
+            SyncConveyor(x, y);
 
         return true;
     }
@@ -124,6 +153,7 @@ public partial class ConveyorSystem
         attachmentStates.Remove(pos);
 
         DustEffects(x, y);
+        PlayRemoveSound(x, y);
 
         if (Main.netMode != NetmodeID.MultiplayerClient)
         {
@@ -304,8 +334,7 @@ public partial class ConveyorSystem
         if (player.dead)
             return false;
 
-        // Require holding a hammer to interact/rotate
-        if (player.HeldItem is null || player.HeldItem.hammer <= 0)
+        if (player.HeldItem is null || player.HeldItem.type != ModContent.ItemType<ConveyorAttachmentTool>())
             return false;
 
         Point target = player.TargetCoords();

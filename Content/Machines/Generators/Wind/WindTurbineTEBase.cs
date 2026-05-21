@@ -11,12 +11,12 @@ public abstract class WindTurbineTEBase : GeneratorTE
     protected abstract float BaseGeneratedPower { get; }
     protected virtual int WindCheckHeight => MachineTile.Height - 1;
 
-    public override bool PoweredOn => GetWindEfficiency() > 0f && WorldGen.InAPlaceWithWind(Position.X, Position.Y, MachineTile.Width, WindCheckHeight);
+    public override bool IsRunning => GetWindEfficiency() > 0f && WorldGen.InAPlaceWithWind(Position.X, Position.Y, MachineTile.Width, WindCheckHeight);
 
     public override void MachineUpdate()
     {
         MaxGeneratedPower = BaseGeneratedPower;
-        GeneratedPower = PoweredOn ? MaxGeneratedPower * GetWindEfficiency() : 0f;
+        GeneratedPower = IsRunning ? MaxGeneratedPower * GetWindEfficiency() : 0f;
     }
 
     protected float GetWindEfficiency()

@@ -9,6 +9,9 @@ namespace Macrocosm.Content.Tiles.Blocks.Terrain;
 
 public class Basalt : ModTile
 {
+    /// <summary> Types that merge with this. Use instead of <c>Main.tileFrame[][]</c> </summary>
+    public static bool[] TileMerge { get; set; } = TileID.Sets.Factory.CreateBoolSet();
+
     public override void SetStaticDefaults()
     {
         Main.tileSolid[Type] = true;
@@ -17,8 +20,6 @@ public class Basalt : ModTile
 
         TileID.Sets.ChecksForMerge[Type] = true;
         Regolith.TileMerge[Type] = true;
-        Main.tileMerge[Type][ModContent.TileType<Chalcedony>()] = true;
-        Main.tileMerge[ModContent.TileType<Chalcedony>()][Type] = true;
         Main.tileMerge[Type][ModContent.TileType<Protolith>()] = true;
         Main.tileMerge[ModContent.TileType<Protolith>()][Type] = true;
         TileID.Sets.CanBeClearedDuringOreRunner[Type] = true;
@@ -47,5 +48,6 @@ public class Basalt : ModTile
     public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight)
     {
         WorldGen.TileMergeAttempt(-2, ModContent.TileType<Regolith>(), ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
+        WorldGen.TileMergeAttemptFrametest(i, j, Type, TileMerge, ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
     }
 }

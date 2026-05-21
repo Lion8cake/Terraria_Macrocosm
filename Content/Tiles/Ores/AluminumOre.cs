@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Macrocosm.Common.Sets;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -28,5 +29,7 @@ public class AluminumOre : ModTile
         HitSound = SoundID.Tink;
 
         MinPick = 35;
+
+        TileSets.DrillItemDrop[Type] = ModContent.ItemType<Items.Ores.AluminumOre>();
     }
 }

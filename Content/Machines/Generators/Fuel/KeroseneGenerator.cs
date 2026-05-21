@@ -108,7 +108,7 @@ public class KeroseneGenerator : MachineTile
         int tileOffsetY = tileFrameY % (Height * 18) / 18;
         if (TileEntity.TryGet(i, j, out MachineTE te))
         {
-            if (te.PoweredOn)
+            if (te.IsOnFrame)
             {
                 // Exhaust position - spawn smoke
                 if (tileOffsetX == 0 && tileOffsetY == 0)

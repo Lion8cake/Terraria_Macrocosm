@@ -779,6 +779,11 @@ SilicaPearlsand: {
 	Tooltip: ""
 }
 
+Bitumen: {
+	DisplayName: Bitumen
+	Tooltip: ""
+}
+
 SilicaSand: {
 	DisplayName: Silica Sand
 	Tooltip: ""
@@ -2961,6 +2966,35 @@ ConveyorInlet: {
 ConveyorOutlet: {
 	DisplayName: Conveyor Outlet
 	Tooltip: Connects to a conveyor and takes items from chests and machines
+}
+
+ConveyorAttachmentTool: {
+	DisplayName: Conveyor Attachment Tool
+	Tooltip:
+		'''
+		Uses hoppers and droppers from your inventory
+		Right click to rotate placed attachments
+		'''
+}
+
+ConveyorWrench: {
+	DisplayName: Conveyor Wrench
+	Tooltip: Places red conveyor pipes from your inventory
+}
+
+ConveyorGreenWrench: {
+	DisplayName: Green Conveyor Wrench
+	Tooltip: Places green conveyor pipes from your inventory
+}
+
+ConveyorBlueWrench: {
+	DisplayName: Blue Conveyor Wrench
+	Tooltip: Places blue conveyor pipes from your inventory
+}
+
+ConveyorYellowWrench: {
+	DisplayName: Yellow Conveyor Wrench
+	Tooltip: Places yellow conveyor pipes from your inventory
 }
 
 HoneyCanister: {

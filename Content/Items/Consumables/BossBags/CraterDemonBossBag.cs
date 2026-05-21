@@ -49,7 +49,7 @@ public class CraterDemonBossBag : ModItem
         itemLoot.Add(ItemDropRule.OneFromOptions(1,
             ModContent.ItemType<CalcicCane>(),
             ModContent.ItemType<Cruithne>(),
-            ModContent.ItemType<ImbriumJewel>(),
+            ModContent.ItemType<PhantasmalSkullTome>(),
             ModContent.ItemType<ChampionsBlade>()
             ));
     }

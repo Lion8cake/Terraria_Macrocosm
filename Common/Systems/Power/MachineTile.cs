@@ -27,7 +27,7 @@ public abstract class MachineTile : ModTile
 
     /// <summary> 
     /// Used to determine if the machine is powered on, by using the Tile frame.
-    /// <br/> Typically, <see cref="MachineTE.PoweredOn"/> is determined by this return value.
+    /// <br/> Typically, <see cref="MachineTE.IsOnFrame"/> is determined by this return value.
     /// </summary>
     public virtual bool IsPoweredOnFrame(int i, int j) => false;
 

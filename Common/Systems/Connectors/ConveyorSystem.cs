@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.UI;
@@ -63,6 +64,8 @@ public partial class ConveyorSystem : ModSystem, IOnPlayerJoining
             return false;
 
         data.SetPipe(type);
+        PlayPlaceSound(x, y);
+
         if (sync && Main.netMode != NetmodeID.SinglePlayer)
             SyncConveyor(x, y);
 
@@ -90,6 +93,8 @@ public partial class ConveyorSystem : ModSystem, IOnPlayerJoining
         }
 
         data.Inlet = true;
+        PlayPlaceSound(x, y);
+
         if (sync && Main.netMode != NetmodeID.SinglePlayer)
             SyncConveyor(x, y, dust);
 
@@ -117,6 +122,8 @@ public partial class ConveyorSystem : ModSystem, IOnPlayerJoining
         }
 
         data.Outlet = true;
+        PlayPlaceSound(x, y);
+
         if (sync && Main.netMode != NetmodeID.SinglePlayer)
             SyncConveyor(x, y, dust);
 
@@ -172,6 +179,7 @@ public partial class ConveyorSystem : ModSystem, IOnPlayerJoining
             }
 
             DustEffects(x, y);
+            PlayRemoveSound(x, y);
 
             if (itemDrop > 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 Item.NewItem(new EntitySource_TileBreak(x, x, "Conveyor"), new Vector2(x * 16 + 8, y * 16 + 8), itemDrop);
@@ -189,6 +197,16 @@ public partial class ConveyorSystem : ModSystem, IOnPlayerJoining
         if (dustType >= 0)
             for (int i = 0; i < 5; i++)
                 Dust.NewDustDirect(new Vector2(x * 16 + 8, y * 16 + 8), 1, 1, dustType);
+    }
+
+    private static void PlayPlaceSound(int x, int y)
+    {
+        SoundEngine.PlaySound(SoundID.Mech with { Volume = 0.7f, Pitch = 0.1f }, new Vector2(x * 16 + 8, y * 16 + 8));
+    }
+
+    private static void PlayRemoveSound(int x, int y)
+    {
+        SoundEngine.PlaySound(SoundID.Dig with { Volume = 0.6f, Pitch = 0.2f }, new Vector2(x * 16 + 8, y * 16 + 8));
     }
 
     public override void PostUpdateWorld()

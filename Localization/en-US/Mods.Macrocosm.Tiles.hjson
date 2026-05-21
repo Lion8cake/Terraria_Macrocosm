@@ -37,6 +37,7 @@ LithiumOre.MapEntry: Lithium
 ArtemiteOre.MapEntry: Artemite
 OilShale.MapEntry: Oil Shale
 Coal.MapEntry: Coal
+Bitumen.MapEntry: Bitumen
 SeleniteBar.MapEntry: Selenite Bar
 ChandriumBar.MapEntry: Chandrium Bar
 DianiteBar.MapEntry: Dianite Bar

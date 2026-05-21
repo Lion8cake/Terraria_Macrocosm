@@ -31,6 +31,8 @@ public abstract class AutocrafterTEBase : ConsumerTE
     private float craftTimer;
     private float CraftRate => 60f;
 
+    public override float PowerDemand => IsEnabledByPlayer && HasCraftingWork() ? MaxPower : 0f;
+
     public override void OnFirstUpdate()
     {
         for (int i = 0; i < OutputSlots; i++)
@@ -146,10 +148,10 @@ public abstract class AutocrafterTEBase : ConsumerTE
 
     public override void MachineUpdate()
     {
-        if (!PoweredOn || SelectedRecipes is null)
+        if (!IsRunning || SelectedRecipes is null)
             return;
 
-        craftTimer += 1f * PowerProgress;
+        craftTimer += 1f * RatedPowerProgress;
         if (craftTimer < CraftRate)
             return;
 
@@ -162,6 +164,9 @@ public abstract class AutocrafterTEBase : ConsumerTE
                 continue;
 
             if (!CanCraftRecipe(outputSlot, recipe))
+                continue;
+
+            if (!CanStoreRecipeOutput(outputSlot, recipe))
                 continue;
 
             ConsumeRecipeIngredients(outputSlot, recipe);
@@ -193,6 +198,27 @@ public abstract class AutocrafterTEBase : ConsumerTE
                 return false;
         }
         return true;
+    }
+
+    private bool HasCraftingWork()
+    {
+        if (SelectedRecipes is null)
+            return false;
+
+        for (int outputSlot = 0; outputSlot < SelectedRecipes.Length; outputSlot++)
+        {
+            Recipe recipe = SelectedRecipes[outputSlot];
+            if (recipe is not null && CanCraftRecipe(outputSlot, recipe) && CanStoreRecipeOutput(outputSlot, recipe))
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool CanStoreRecipeOutput(int outputSlot, Recipe recipe)
+    {
+        Item result = recipe.createItem.Clone();
+        return Inventory.TryPlacingItemInSlot(ref result, outputSlot, justCheck: true, sound: false, serverSync: false);
     }
 
     private void ConsumeRecipeIngredients(int outputSlot, Recipe recipe)

@@ -21,7 +21,9 @@ public class LockOnStaffBolt : ModProjectile
 
     public ref float AI_HomingTimer => ref Projectile.ai[0];
     public ref float AI_AccelerationTimer => ref Projectile.ai[1];
-    public ref float AI_InitialDecelerationTimer => ref Projectile.ai[2];
+    public ref float AI_TargetIndex => ref Projectile.ai[2];
+    public ref float AI_InitialDecelerationTimer => ref Projectile.localAI[0];
+    public ref float AI_VisualFadeIn => ref Projectile.localAI[1];
 
     public override void SetStaticDefaults()
     {
@@ -46,10 +48,11 @@ public class LockOnStaffBolt : ModProjectile
 
     public override bool? CanHitNPC(NPC npc)
     {
-        if (npc.GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile == false)
+        int targetIndex = (int)AI_TargetIndex;
+        if (targetIndex < 0 || targetIndex >= Main.maxNPCs)
             return false;
-        else
-            return true;
+
+        return Main.npc[targetIndex] == npc && npc.GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile;
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
@@ -89,8 +92,9 @@ public class LockOnStaffBolt : ModProjectile
         {
             AI_HomingTimer = minHomingTime;
             // only run locally
-            NPC npc = Main.npc[(int)Projectile.localAI[0]];
-            if (Projectile.owner == Main.myPlayer && npc.CanBeChasedBy(Projectile) && npc.GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile)
+            int targetIndex = (int)AI_TargetIndex;
+            NPC npc = targetIndex >= 0 && targetIndex < Main.maxNPCs ? Main.npc[targetIndex] : null;
+            if (Projectile.owner == Main.myPlayer && npc is not null && npc.CanBeChasedBy(Projectile) && npc.GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile)
             {
                 float targetCenterX = npc.position.X + npc.width / 2;
                 float targetCenterY = npc.position.Y + npc.height / 2;
@@ -140,20 +144,20 @@ public class LockOnStaffBolt : ModProjectile
         #region Visual Effects
 
         // alpha fade-in
-        Projectile.localAI[1] += 0.6f;
-        if (Projectile.localAI[1] > 6f)
+        AI_VisualFadeIn += 0.6f;
+        if (AI_VisualFadeIn > 6f)
         {
-            Projectile.localAI[1] = 6f;
+            AI_VisualFadeIn = 6f;
             Projectile.alpha = 0;
         }
         else
         {
-            Projectile.alpha = (int)(255f - 42f * Projectile.localAI[1]) + 100;
+            Projectile.alpha = (int)(255f - 42f * AI_VisualFadeIn) + 100;
             if (Projectile.alpha > 255)
                 Projectile.alpha = 255;
         }
 
-        if (Projectile.localAI[1] < 1.2f)
+        if (AI_VisualFadeIn < 1.2f)
         {
             // spawn some dusts as barrel flash
             for (int i = 0; i < 30; i++)
@@ -233,8 +237,8 @@ public class LockOnStaffBolt : ModProjectile
     public override void OnKill(int timeLeft)
     {
         Player player = Main.player[Projectile.owner];
-        if (Main.npc[(int)Projectile.localAI[0]].TryGetGlobalNPC(out MacrocosmNPC macNpc)
-        && player.ownedProjectileCounts[player.HeldItem.shoot] <= 0)
+        int targetIndex = (int)AI_TargetIndex;
+        if (targetIndex >= 0 && targetIndex < Main.maxNPCs && Main.npc[targetIndex].TryGetGlobalNPC(out MacrocosmNPC macNpc))
         {
             macNpc.TargetedByHomingProjectile = false;
         }
@@ -268,7 +272,7 @@ public class LockOnStaffBolt : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        trail.Opacity = Projectile.localAI[1];
+        trail.Opacity = AI_VisualFadeIn;
 
         if (Projectile.alpha < 1 && Projectile.timeLeft > 3)
             trail?.Draw(Projectile, Projectile.Size / 2f);

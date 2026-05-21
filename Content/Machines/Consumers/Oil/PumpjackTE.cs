@@ -40,6 +40,27 @@ public class PumpjackTE : ConsumerTE
     private float FillRate => 60;
     public float FillProgress => fillTimer / FillRate;
 
+    public override float PowerDemand => IsEnabledByPlayer && (CanExtractOil || CanFillContainer) ? MaxPower : 0f;
+
+    private bool CanExtractOil => TankAmount < TankCapacity;
+
+    private bool CanFillContainer
+    {
+        get
+        {
+            LiquidContainerData containerData = ItemSets.LiquidContainerData[ContainerSlot.type];
+            if (!containerData.Valid || !containerData.Empty || ContainerSlot.IsAir || TankAmount <= 0f)
+                return false;
+
+            int fillType = LiquidContainerData.GetFillType(ItemSets.LiquidContainerData, LiquidLoader.LiquidType<Liquids.Oil>(), ContainerSlot.type);
+            if (fillType <= 0)
+                return false;
+
+            Item filledItem = new(fillType);
+            return Inventory.TryPlacingItem(ref filledItem, justCheck: true, sound: false, serverSync: false, startIndex: 1, endIndex: 1);
+        }
+    }
+
     public override void OnFirstUpdate()
     {
         for (int i = 0; i < InventorySize; i++)
@@ -66,9 +87,9 @@ public class PumpjackTE : ConsumerTE
 
     private void Extract()
     {
-        if (PoweredOn && TankAmount < TankCapacity)
+        if (IsRunning && CanExtractOil)
         {
-            extractTimer += 1f * PowerProgress;
+            extractTimer += 1f * RatedPowerProgress;
             if (extractTimer >= ExtractRate)
             {
                 extractTimer -= ExtractRate;
@@ -83,24 +104,11 @@ public class PumpjackTE : ConsumerTE
 
     private void FillContainers()
     {
-        LiquidContainerData containerData = ItemSets.LiquidContainerData[ContainerSlot.type];
-        if (!containerData.Valid || !containerData.Empty)
-            return;
-
-        if (TankAmount <= 0f)
-            return;
-
-        if (ContainerSlot.IsAir)
-            return;
-
-        if (OutputSlot.stack > OutputSlot.maxStack)
+        if (!IsRunning || !CanFillContainer)
             return;
 
         int fillType = LiquidContainerData.GetFillType(ItemSets.LiquidContainerData, LiquidLoader.LiquidType<Liquids.Oil>(), ContainerSlot.type);
-        if (fillType <= 0)
-            return;
-
-        fillTimer += 1f * PowerProgress;
+        fillTimer += 1f * RatedPowerProgress;
         if (fillTimer >= FillRate)
         {
             fillTimer -= FillRate;

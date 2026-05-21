@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Macrocosm.Common.Sets;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -27,6 +28,8 @@ public class OilShale : ModTile
         HitSound = SoundID.Tink;
 
         MinPick = 35;
+
+        TileSets.DrillItemDrop[Type] = ModContent.ItemType<Items.Ores.OilShale>();
     }
 
     public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight)

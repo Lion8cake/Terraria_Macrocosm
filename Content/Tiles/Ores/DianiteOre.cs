@@ -1,3 +1,4 @@
+using Macrocosm.Common.Sets;
 using Macrocosm.Content.Dusts;
 using Macrocosm.Content.Tiles.Blocks.Terrain;
 using Microsoft.Xna.Framework;
@@ -32,6 +33,8 @@ public class DianiteOre : ModTile
 
         MinPick = 225;
         MineResist = 5f;
+
+        TileSets.DrillItemDrop[Type] = ModContent.ItemType<Items.Ores.DianiteOre>();
     }
 
     public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight)

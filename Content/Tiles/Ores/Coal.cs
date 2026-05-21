@@ -1,4 +1,5 @@
-﻿using Macrocosm.Content.Dusts;
+﻿using Macrocosm.Common.Sets;
+using Macrocosm.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -24,5 +25,7 @@ public class Coal : ModTile
         HitSound = SoundID.Tink;
 
         MinPick = 35;
+
+        TileSets.DrillItemDrop[Type] = ModContent.ItemType<Items.Ores.Coal>();
     }
 }

@@ -60,6 +60,8 @@ public partial class MoonOrbitSubworld
     [Task]
     private void StructureTask(GenerationProgress progress)
     {
+        bool lcShipPlaced = false;
+
         //The cool stuff
         for (int x = 50; x < Main.maxTilesX - 50; x++)
         {
@@ -70,6 +72,7 @@ public partial class MoonOrbitSubworld
                 if (WorldGen.genRand.NextBool(50000))
                 {
                     int random = WorldGen.genRand.Next(10);
+                    bool isLCShip = random is 7 or 8;
                     Structure structure = random switch
                     {
                         0 => Structure.Get<LunarianCameoPod>(),
@@ -87,7 +90,11 @@ public partial class MoonOrbitSubworld
 
                     if (gen_StructureMap.CanPlace(new Rectangle(x - 10, y - 10, structure.Size.X + 10, structure.Size.Y + 10)))
                     {
-                        structure.Place(new(x, y), gen_StructureMap);
+                        if (isLCShip && lcShipPlaced)
+                            continue;
+
+                        if (structure.Place(new(x, y), gen_StructureMap) && isLCShip)
+                            lcShipPlaced = true;
                     }
                 }
             }

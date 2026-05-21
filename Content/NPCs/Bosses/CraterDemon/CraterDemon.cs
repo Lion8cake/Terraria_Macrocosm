@@ -527,7 +527,7 @@ public class CraterDemon : ModNPC
         notExpertRule.OnSuccess(ItemDropRule.OneFromOptions(1,
             ModContent.ItemType<CalcicCane>(),
             ModContent.ItemType<Cruithne>(),
-            ModContent.ItemType<ImbriumJewel>(),
+            ModContent.ItemType<PhantasmalSkullTome>(),
             ModContent.ItemType<ChampionsBlade>()
             ));
 

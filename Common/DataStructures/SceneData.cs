@@ -1,4 +1,5 @@
 ﻿using Macrocosm.Common.Systems;
+using Macrocosm.Common.Utils;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -30,11 +31,11 @@ public class SceneData
 
     public Rectangle ScanArea => WorldUtils.ClampToWorld(new Rectangle(TilePosition.X - Main.buffScanAreaWidth / 2, TilePosition.Y - Main.buffScanAreaHeight / 2, Main.buffScanAreaWidth, Main.buffScanAreaHeight));
 
-    public bool ZoneUnderworldHeight => TilePosition.Y > Main.UnderworldLayer;
-    public bool ZoneRockLayerHeight => TilePosition.Y <= Main.UnderworldLayer && TilePosition.Y > Main.rockLayer;
-    public bool ZoneDirtLayerHeight => TilePosition.Y <= Main.rockLayer && TilePosition.Y > Main.worldSurface;
-    public bool ZoneOverworldHeight => TilePosition.Y <= Main.worldSurface && TilePosition.Y > Main.worldSurface * 0.3499999940395355;
-    public bool ZoneSkyHeight => TilePosition.Y <= Main.worldSurface * 0.3499999940395355;
+    public bool ZoneUnderworldHeight => Utility.InUnderworldHeight(TilePosition.Y);
+    public bool ZoneRockLayerHeight => Utility.InRockLayerHeight(TilePosition.Y);
+    public bool ZoneDirtLayerHeight => Utility.InDirtLayerHeight(TilePosition.Y);
+    public bool ZoneOverworldHeight => Utility.InOverworldHeight(TilePosition.Y);
+    public bool ZoneSkyHeight => Utility.InSkyHeight(TilePosition.Y);
     public bool ZoneBeach => WorldGen.oceanDepths(TilePosition.X, TilePosition.Y);
     public bool ZoneRain => Main.raining && TilePosition.Y <= Main.worldSurface;
 

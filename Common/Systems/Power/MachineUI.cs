@@ -89,7 +89,7 @@ public abstract class MachineUI : UIDragablePanel
 
         if (MachineTE is ConsumerTE consumer)
         {
-            if (consumer.InputPower >= consumer.MinPower)
+            if (consumer.IsRunning)
             {
                 powerOnIcon.SetVisibility(1f);
                 powerOffIcon.SetVisibility(0f);
@@ -102,7 +102,7 @@ public abstract class MachineUI : UIDragablePanel
         }
         else if (MachineTE is GeneratorTE or BatteryTE)
         {
-            if (MachineTE.PoweredOn)
+            if (MachineTE.IsOnFrame)
             {
                 powerOnIcon.SetVisibility(1f);
                 powerOffIcon.SetVisibility(0f);

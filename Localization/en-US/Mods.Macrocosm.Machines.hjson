@@ -28,9 +28,11 @@ Common: {
 		Simple: "{0}kW"
 		Energy: "{0}kJ"
 		Common: "{0}kW / {1}kW"
-		Consumer: Consumed: {0}kW / Required: {1}kW
+		Consumer: Supplied: {0}kW / Demand: {1}kW / Max: {2}kW
+		ConsumerIdle: Idle / Max: {0}kW
 		Generator: Generated: {0}kW / Max: {1}kW
 		Battery: Stored: {0}kJ / Capacity: {1}kJ
+		Circuit: Circuit: Generated {0}kW / Demand {1}kW / Batteries {2}kJ/{3}kJ ({4}kW)
 		Controller: ""
 	}
 }

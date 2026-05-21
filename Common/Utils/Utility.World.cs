@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.Events;
 using Terraria.ID;
@@ -18,6 +19,21 @@ public static partial class Utility
     public static bool PillarsActive => Main.npc.Any(npc => npc.type is NPCID.LunarTowerVortex or NPCID.LunarTowerStardust or NPCID.LunarTowerNebula or NPCID.LunarTowerSolar);
 
     public static bool MartianProbeActive => Main.npc.Any(npc => npc.type is NPCID.MartianProbe);
+
+    public static bool InUnderworldHeight(Vector2 worldPosition) => InUnderworldHeight(worldPosition.ToTileCoordinates().Y);
+    public static bool InUnderworldHeight(int tileY) => tileY > Main.UnderworldLayer;
+
+    public static bool InRockLayerHeight(Vector2 worldPosition) => InRockLayerHeight(worldPosition.ToTileCoordinates().Y);
+    public static bool InRockLayerHeight(int tileY) => tileY <= Main.UnderworldLayer && tileY > Main.rockLayer;
+
+    public static bool InDirtLayerHeight(Vector2 worldPosition) => InDirtLayerHeight(worldPosition.ToTileCoordinates().Y);
+    public static bool InDirtLayerHeight(int tileY) => tileY <= Main.rockLayer && tileY > Main.worldSurface;
+
+    public static bool InOverworldHeight(Vector2 worldPosition) => InOverworldHeight(worldPosition.ToTileCoordinates().Y);
+    public static bool InOverworldHeight(int tileY) => tileY <= Main.worldSurface && tileY > Main.worldSurface * 0.3499999940395355;
+
+    public static bool InSkyHeight(Vector2 worldPosition) => InSkyHeight(worldPosition.ToTileCoordinates().Y);
+    public static bool InSkyHeight(int tileY) => tileY <= Main.worldSurface * 0.3499999940395355;
 
     public static void WorldGen_ShakeTree(int i, int j) => typeof(WorldGen).InvokeMethod("ShakeTree", parameters: [i, j]);
 

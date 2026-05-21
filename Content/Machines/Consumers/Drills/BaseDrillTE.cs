@@ -1,15 +1,10 @@
-﻿using Macrocosm.Common.DataStructures;
-using Macrocosm.Common.Loot;
-using Macrocosm.Common.Loot.DropConditions;
-using Macrocosm.Common.Loot.DropRules;
-using Macrocosm.Common.Subworlds;
+using Macrocosm.Common.DataStructures;
+using Macrocosm.Common.Drawing.Particles;
+using Macrocosm.Common.ItemCreationContexts;
+using Macrocosm.Common.Sets;
 using Macrocosm.Common.Systems.Power;
 using Macrocosm.Common.Utils;
-using Macrocosm.Content.Items.Blocks.Sands;
-using Macrocosm.Content.Items.Blocks.Terrain;
-using Macrocosm.Content.Items.Ores;
-using Macrocosm.Content.Sounds;
-using Macrocosm.Content.Subworlds;
+using Macrocosm.Content.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
@@ -19,10 +14,12 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using Terraria.ObjectData;
 
 namespace Macrocosm.Content.Machines.Consumers.Drills;
 
@@ -30,56 +27,69 @@ public abstract class BaseDrillTE : ConsumerTE
 {
     public List<int> BlacklistedItems { get; set; } = new();
 
-    private LootTable lootTable;
-    public LootTable LootTable
+    
+    // Tile sampling
+    
+
+    /// <summary>
+    /// Flat row-major snapshot of tiles directly below the machine.
+    /// 0 = air, -1 = solid but not drillable, &gt;0 = item ID the tile drops.
+    /// </summary>
+    public int[] SampledItems { get; private set; } = Array.Empty<int>();
+
+    /// <summary> Width of the sample area. Defaults to the machine footprint width. </summary>
+    public virtual int SampleGridWidth => MachineTile.Width;
+
+    /// <summary> Depth (rows) of the sample area below the machine footprint. </summary>
+    public virtual int SampleGridHeight => 5;
+
+    /// <summary> Ticks between automatic re-samples (~3 real-time minutes). </summary>
+    protected virtual int SampleRate => 3 * 60 * 60;
+
+    // Start at max so the first update triggers an immediate sample.
+    private int sampleTimer = int.MaxValue;
+
+    /// <summary>
+    /// Immediately (re)samples the tiles below the machine and, in multiplayer, syncs the result.
+    /// Safe to call from the UI thread; the sample is snapped from the current tile state.
+    /// </summary>
+    public void RequestResample()
     {
-        get
-        {
-            if (lootTable is null)
-            {
-                lootTable = new();
-                PopulateItemLoot(lootTable);
-            }
-            return lootTable;
-        }
-        set => lootTable = value;
+        SampleTilesUnderMachine();
+        if (Main.netMode != NetmodeID.SinglePlayer)
+            NetSync();
     }
 
     protected abstract float ExcavateRate { get; }
-
-    protected abstract void PopulateItemLoot(LootTable lootTable);
 
     protected float excavateTimer;
     protected int sceneCheckTimer;
     protected SceneData scene;
 
+    public override float PowerDemand => IsEnabledByPlayer && HasAvailableLoot() ? MaxPower : 0f;
+
     public override void MachineUpdate()
     {
         UpdateActiveSounds();
 
-        // Capture current scene
         scene ??= new(Position);
 
-        // Generate loot table based on current subworld and biome
-        if (LootTable is null)
+        if (IsRunning)
         {
-            LootTable = new();
-            PopulateItemLoot(LootTable);
-        }
-
-        if (PoweredOn)
-        {
-            excavateTimer += 1f * PowerProgress;
+            excavateTimer += 1f * RatedPowerProgress;
             if (excavateTimer >= ExcavateRate)
             {
                 excavateTimer -= ExcavateRate;
-                if(LootTable is not null)
-                {
-                    foreach (var entry in LootTable.Where((rule) => rule is IBlacklistable).Cast<IBlacklistable>())
-                        entry.Blacklisted = BlacklistedItems.Contains(entry.ItemID);
+                DropFromSample();
+            }
 
-                    LootTable.Drop(Utility.GetClosestPlayer(Position, MachineTile.Width * 16, MachineTile.Height * 16));
-                }
+            // Periodic tile re-sample
+            if (++sampleTimer >= SampleRate)
+            {
+                sampleTimer = 0;
+                SampleTilesUnderMachine();
+                if (Main.netMode != NetmodeID.SinglePlayer)
+                    NetSync();
             }
 
             sceneCheckTimer++;
@@ -91,6 +101,103 @@ public abstract class BaseDrillTE : ConsumerTE
         }
     }
 
+    
+    // Tile sampling
+    
+
+    protected void SampleTilesUnderMachine()
+    {
+        Point16 origin = TileObjectData.TopLeft(Position.X, Position.Y);
+        int startX = origin.X;
+        int startY = origin.Y + MachineTile.Height; // first row directly below footprint
+        int w = SampleGridWidth;
+        int h = SampleGridHeight;
+
+        SampledItems = new int[w * h];
+        for (int row = 0; row < h; row++)
+        {
+            for (int col = 0; col < w; col++)
+            {
+                int wx = startX + col;
+                int wy = startY + row;
+                if (!WorldGen.InWorld(wx, wy))
+                    continue;
+
+                Tile tile = Main.tile[wx, wy];
+                if (!tile.HasTile)
+                {
+                    SampledItems[row * w + col] = 0; // air
+                }
+                else
+                {
+                    int drop = TileSets.DrillItemDrop[tile.TileType];
+                    SampledItems[row * w + col] = drop >= 0 ? drop : -1;
+                }
+            }
+        }
+    }
+
+    
+    // Proportional loot from sample
+    
+
+    private void DropFromSample()
+    {
+        if (SampledItems.Length == 0)
+            return;
+
+        // Count each drillable item type, skipping blacklisted entries
+        var counts = new Dictionary<int, int>();
+        foreach (int id in SampledItems)
+            if (id > 0 && !BlacklistedItems.Contains(id))
+                counts[id] = counts.GetValueOrDefault(id) + 1;
+
+        if (counts.Count == 0)
+            return;
+
+        int total = SampledItems.Length;
+        Player nearest = Utility.GetClosestPlayer(Position, MachineTile.Width * 16, MachineTile.Height * 16);
+        Vector2 dropPosition = Position.ToWorldCoordinates();
+        TileObjectData tileData = TileObjectData.GetTileData(Main.tile[Position]);
+        if (tileData is not null)
+            dropPosition = new(dropPosition.X + tileData.Width * 16 / 2f, dropPosition.Y + (tileData.Height + 3) * 16);
+
+        foreach (var (itemId, count) in counts)
+        {
+            // Drop probability proportional to how much of the grid this tile occupies
+            float chance = (float)count / total;
+            if (Main.rand.NextFloat() < chance)
+            {
+                int amt = Main.rand.Next(1, 4);
+                Item item = new(itemId, amt);
+                bool placed = InventorySize > 0 && Inventory.TryPlacingItem(ref item, sound: false);
+
+                if (placed)
+                {
+                    Item clone = new(itemId, amt);
+                    Particle.Create<ItemTransferParticle>((p) =>
+                    {
+                        p.StartPosition = dropPosition + Main.rand.NextVector2Circular(32, 16);
+                        p.EndPosition   = dropPosition + new Vector2(0, -96) + Main.rand.NextVector2Circular(16, 16);
+                        p.ItemType      = clone.type;
+                        p.TimeToLive    = Main.rand.Next(60, 80);
+                    });
+                }
+                else
+                {
+                    CommonCode.DropItem(dropPosition, new EntitySource_TileEntity(this), itemId, amt);
+                }
+            }
+        }
+    }
+
+    private bool HasAvailableLoot()
+        => SampledItems.Any(id => id > 0 && !BlacklistedItems.Contains(id));
+
+    
+    // Sound helpers
+    
+
     public override void OnKill()
     {
         StopActiveSounds();
@@ -99,9 +206,9 @@ public abstract class BaseDrillTE : ConsumerTE
 
     protected Vector2 ActiveSoundPosition => Position.ToVector2() * 16f + new Vector2(MachineTile.Width, MachineTile.Height) * 8f;
 
-    protected float ActiveSoundPowerProgress => PowerProgress > 0f ? PowerProgress : 1f;
+    protected float ActiveSoundPowerProgress => RatedPowerProgress > 0f ? RatedPowerProgress : 1f;
 
-    protected bool ShouldPlayActiveSound => !Main.dedServ && PoweredOn;
+    protected bool ShouldPlayActiveSound => !Main.dedServ && IsRunning;
 
     protected virtual void UpdateActiveSounds()
     {
@@ -158,6 +265,10 @@ public abstract class BaseDrillTE : ConsumerTE
         slot = SlotId.Invalid;
     }
 
+    
+    // Net / Save
+    
+
     protected override void ConsumerNetSend(BinaryWriter writer)
     {
         base.ConsumerNetSend(writer);
@@ -165,6 +276,10 @@ public abstract class BaseDrillTE : ConsumerTE
         writer.Write(BlacklistedItems.Count);
         foreach (int itemId in BlacklistedItems)
             writer.Write(itemId);
+
+        writer.Write(SampledItems.Length);
+        foreach (int id in SampledItems)
+            writer.Write(id);
     }
 
     protected override void ConsumerNetReceive(BinaryReader reader)
@@ -175,6 +290,11 @@ public abstract class BaseDrillTE : ConsumerTE
         BlacklistedItems = new(blacklistedCount);
         for (int i = 0; i < blacklistedCount; i++)
             BlacklistedItems.Add(reader.ReadInt32());
+
+        int sampledCount = reader.ReadInt32();
+        SampledItems = new int[sampledCount];
+        for (int i = 0; i < sampledCount; i++)
+            SampledItems[i] = reader.ReadInt32();
     }
 
     protected override void ConsumerSaveData(TagCompound tag)
@@ -182,6 +302,7 @@ public abstract class BaseDrillTE : ConsumerTE
         base.ConsumerSaveData(tag);
 
         tag[nameof(BlacklistedItems)] = BlacklistedItems;
+        tag[nameof(SampledItems)]     = SampledItems;
     }
 
     protected override void ConsumerLoadData(TagCompound tag)
@@ -190,5 +311,8 @@ public abstract class BaseDrillTE : ConsumerTE
 
         if (tag.ContainsKey(nameof(BlacklistedItems)))
             BlacklistedItems = tag.GetList<int>(nameof(BlacklistedItems)) as List<int>;
+
+        if (tag.ContainsKey(nameof(SampledItems)))
+            SampledItems = tag.Get<int[]>(nameof(SampledItems)) ?? Array.Empty<int>();
     }
 }

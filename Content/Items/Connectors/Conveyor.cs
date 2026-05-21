@@ -1,8 +1,4 @@
-﻿using Macrocosm.Common.Systems.Connectors;
-using Macrocosm.Common.Utils;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace Macrocosm.Content.Items.Connectors;
@@ -20,19 +16,9 @@ public class Conveyor : ModItem
         Item.height = 20;
         Item.maxStack = Item.CommonMaxStack;
         Item.value = Item.buyPrice(copper: 10);
-        Item.useStyle = ItemUseStyleID.Swing;
-        Item.useTurn = true;
-        Item.useTime = 10;
-        Item.useAnimation = 10;
-        Item.autoReuse = true;
         Item.consumable = true;
         Item.mech = true;
         Item.ammo = Type;
         Item.notAmmo = true;
-    }
-    
-    public override bool? UseItem(Player player)
-    {
-        return null;
     }
 }

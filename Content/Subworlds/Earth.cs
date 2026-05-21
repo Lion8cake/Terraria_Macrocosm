@@ -28,8 +28,7 @@ public static class Earth
 
     public static float SolarPanelPowerMultiplier(Vector2 position)
     {
-        SceneData scene = new(position);
-        return scene.ZoneSkyHeight ? 1.1f : 1f;
+        return Utility.InSkyHeight(position) ? 1.1f : 1f;
     }
 
     /// <summary> The ambient temperature, expressed in °C. Pass position only when you need temperature at a position different than the local player's </summary>

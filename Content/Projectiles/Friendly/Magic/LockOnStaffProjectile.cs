@@ -4,6 +4,7 @@ using Macrocosm.Common.Utils;
 using Macrocosm.Content.Sounds;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -21,6 +22,7 @@ public class LockOnStaffProjectile : ChargedHeldProjectile
 
     private readonly int ManaUseAmount = 5;
     public int lockOnMax = 4;
+    private readonly List<int> lockedTargets = new();
 
     //public NPC lockedOn[4] = -1;
 
@@ -75,37 +77,31 @@ public class LockOnStaffProjectile : ChargedHeldProjectile
 
     private void LockOn()
     {
-        int id = -1;
-        NPC[] numbers = new NPC[4];
-
         for (int i = 0; i < Main.maxNPCs; i++)
         {
             NPC npc = Main.npc[i];
-            //if (npc.TryGetGlobalNPC(out MacrocosmNPC macNpc) && macNpc.TargetedByHomingProjectile == true)
-            //    lockOnMax--;
-
             if (lockOnMax <= 0)
                 return;
+
             if (npc.CanBeChasedBy() && Main.npc[i].getRect().Intersects(new Rectangle((int)(Main.MouseWorld.X - 10f), (int)(Main.MouseWorld.Y - 10f), 20, 20))
             && npc.GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile == false)
             {
-                id = i;
-                if (id > -1 && id < Main.maxNPCs)
-                {
-                    Main.npc[id].GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile = true;
-                    SoundEngine.PlaySound(SoundID.Item29, Main.npc[id].position);
-                    lockOnMax--;
-                }
+                npc.GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile = true;
+                lockedTargets.Add(i);
+                SoundEngine.PlaySound(SoundID.Item29, npc.position);
+                lockOnMax--;
             }
-            //lockOnMax = 4;
         }
     }
 
-    private void ResetTargets()
+    private void ResetLockedTargets()
     {
-        for (int i = 0; i < Main.maxNPCs; i++)
+        foreach (int targetIndex in lockedTargets)
         {
-            NPC npc = Main.npc[i];
+            if (targetIndex < 0 || targetIndex >= Main.maxNPCs)
+                continue;
+
+            NPC npc = Main.npc[targetIndex];
             if (npc.TryGetGlobalNPC(out MacrocosmNPC macNpc))
                 macNpc.TargetedByHomingProjectile = false;
         }
@@ -163,21 +159,39 @@ public class LockOnStaffProjectile : ChargedHeldProjectile
 
     public override void OnKill(int timeLeft)
     {
-        if (lockOnMax < 4)
+        if (lockedTargets.Count <= 0)
+            return;
+
+        int spawnedBolts = 0;
+        foreach (int targetIndex in lockedTargets)
         {
-            for (int i = 0; i < Main.maxNPCs; i++)
+            if (targetIndex < 0 || targetIndex >= Main.maxNPCs)
+                continue;
+
+            NPC npc = Main.npc[targetIndex];
+            if (!npc.active || !npc.GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile)
+                continue;
+
+            Vector2 spawnOffset = new(-12f + spawnedBolts * 8f, 0f);
+            int proj = Projectile.NewProjectile(
+                Projectile.InheritSource(Projectile),
+                Projectile.Center + spawnOffset,
+                new Vector2(0, -16),
+                ModContent.ProjectileType<LockOnStaffBolt>(),
+                Projectile.damage,
+                Projectile.knockBack,
+                Main.player[Projectile.owner].whoAmI,
+                ai2: targetIndex
+            );
+
+            if (proj >= 0 && proj < Main.maxProjectiles)
             {
-                NPC npc = Main.npc[i];
-                if(npc.active){
-                    if (npc.GetGlobalNPC<MacrocosmNPC>().TargetedByHomingProjectile == true)
-                    {
-                        int proj = Projectile.NewProjectile(Projectile.InheritSource(Projectile), Projectile.Center + new Vector2(-12 + (i * 8), 0), new Microsoft.Xna.Framework.Vector2(0, -16), ModContent.ProjectileType<LockOnStaffBolt>(), (int)(Projectile.damage), Projectile.knockBack, Main.player[Projectile.owner].whoAmI, i);
-                        Main.projectile[proj].localAI[0] = i;
-                        Player.CheckMana(Player.HeldItem.mana, true, false);
-                    }
-                }
+                Player.CheckMana(Player.HeldItem.mana, true, false);
+                spawnedBolts++;
             }
         }
-        //ResetTargets();
+
+        if (spawnedBolts == 0)
+            ResetLockedTargets();
     }
 }

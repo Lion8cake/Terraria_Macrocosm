@@ -29,7 +29,7 @@ public class PrintedCircuitBoard : ModItem
           .AddIngredient<Plastic>(1)
           .AddIngredient(ItemID.Wire, 10)
           .AddIngredient(ItemID.SilverBar, 1)
-          .AddTile<Tiles.Crafting.Fabricator>()
+          .AddTile(TileID.WorkBenches)
           .Register();
     }
 }

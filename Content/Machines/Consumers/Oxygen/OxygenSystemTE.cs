@@ -10,7 +10,7 @@ public class OxygenSystemTE : ConsumerTE, IOxygenActiveSource
 
     public bool IsProvidingOxygen
     {
-        get => PoweredOn;
+        get => IsRunning;
         set { }
     }
 

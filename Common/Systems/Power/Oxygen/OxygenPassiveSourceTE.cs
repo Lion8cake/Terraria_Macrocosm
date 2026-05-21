@@ -10,9 +10,9 @@ public abstract class OxygenPassiveSourceTE : MachineTE, IOxygenPassiveSource
 
     public override void UpdatePowerState()
     {
-        if (!PoweredOn && IsProvidingOxygen)
+        if (!IsOnFrame && IsProvidingOxygen)
             TurnOn(automatic: true);
-        else if (PoweredOn && !IsProvidingOxygen)
+        else if (IsOnFrame && !IsProvidingOxygen)
             TurnOff(automatic: true);
     }
 

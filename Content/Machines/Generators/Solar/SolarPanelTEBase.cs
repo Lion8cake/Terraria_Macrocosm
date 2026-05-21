@@ -10,7 +10,7 @@ public abstract class SolarPanelTEBase : GeneratorTE
 {
     protected abstract float BaseGeneratedPower { get; }
 
-    public override bool PoweredOn => GetSolarEfficiency() > 0f;
+    public override bool IsRunning => GeneratedPower > 0f;
 
     public override void MachineUpdate()
     {

@@ -19,8 +19,9 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
 {
     public abstract MachineTile MachineTile { get; }
 
-    public virtual bool PoweredOn => MachineTile.IsPoweredOnFrame(Position.X, Position.Y);
-    public bool ManuallyTurnedOff { get; set; }
+    public virtual bool IsOnFrame => MachineTile.IsPoweredOnFrame(Position.X, Position.Y);
+    public virtual bool IsRunning => IsOnFrame;
+    public bool IsEnabledByPlayer { get; set; } = true;
 
     public virtual bool CanToggleWithWire => true;
 
@@ -51,6 +52,9 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
     {
         string powerInfo = GetPowerInfo();
         Main.NewText($"{Lang.GetMapObjectName(MapHelper.TileToLookup(MachineTile.Type, 0))} - {powerInfo}", DisplayColor);
+
+        if (Circuit is not null)
+            Main.NewText(Circuit.GetPowerInfo(), Color.LightSkyBlue);
     }
 
     public virtual string GetPowerInfo() => "";
@@ -66,7 +70,7 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
     /// <param name="skipWire"></param>
     public void Toggle(bool automatic, bool skipWire = false)
     {
-        if (PoweredOn)
+        if (IsOnFrame)
             TurnOff(automatic, skipWire);
         else
             TurnOn(automatic, skipWire);
@@ -80,7 +84,7 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
     public void TurnOn(bool automatic, bool skipWire = false)
     {
         MachineTile.OnToggleStateFrame(Position.X, Position.Y, skipWire);
-        ManuallyTurnedOff = false;
+        IsEnabledByPlayer = true;
         OnTurnedOn(automatic);
     }
 
@@ -92,7 +96,8 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
     public void TurnOff(bool automatic, bool skipWire = false)
     {
         MachineTile.OnToggleStateFrame(Position.X, Position.Y, skipWire);
-        ManuallyTurnedOff = !automatic;
+        if (!automatic)
+            IsEnabledByPlayer = false;
         OnTurnedOff(automatic);
     }
 
@@ -183,7 +188,7 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
     public virtual void MachineNetSend(BinaryWriter writer) { }
     public sealed override void NetSend(BinaryWriter writer)
     {
-        writer.Write(ManuallyTurnedOff);
+        writer.Write(IsEnabledByPlayer);
         TagIO.ToStream(Inventory.SerializeData(), writer.BaseStream, compress: true);
 
         MachineNetSend(writer);
@@ -193,7 +198,7 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
     public virtual void MachineNetReceive(BinaryReader reader) { }
     public sealed override void NetReceive(BinaryReader reader)
     {
-        ManuallyTurnedOff = reader.ReadBoolean();
+        IsEnabledByPlayer = reader.ReadBoolean();
         Inventory = Inventory.DeserializeData(TagIO.FromStream(reader.BaseStream, compressed: true));
         if (Inventory.Size != InventorySize)
             Inventory = ResizeInventoryForNetReceive(Inventory);
@@ -218,7 +223,7 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
     public virtual void MachineSaveData(TagCompound tag) { }
     public sealed override void SaveData(TagCompound tag)
     {
-        if (ManuallyTurnedOff) tag[nameof(ManuallyTurnedOff)] = true;
+        if (!IsEnabledByPlayer) tag[nameof(IsEnabledByPlayer)] = false;
         if (Inventory.Size > 0) tag[nameof(Inventory)] = Inventory;
 
         MachineSaveData(tag);
@@ -228,7 +233,9 @@ public abstract partial class MachineTE : ModTileEntity, IInventoryOwner
     public virtual void MachineLoadData(TagCompound tag) { }
     public sealed override void LoadData(TagCompound tag)
     {
-        ManuallyTurnedOff = tag.ContainsKey(nameof(ManuallyTurnedOff));
+        IsEnabledByPlayer = !tag.ContainsKey("ManuallyTurnedOff");
+        if (tag.ContainsKey(nameof(IsEnabledByPlayer)))
+            IsEnabledByPlayer = tag.GetBool(nameof(IsEnabledByPlayer));
         Inventory = tag.TryGet(nameof(Inventory), out Inventory inventory) ? inventory : new(InventorySize, this);
         Inventory.Owner = this;
         if(Inventory.Size != InventorySize)

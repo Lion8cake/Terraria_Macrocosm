@@ -50,7 +50,7 @@ public class BurnerGeneratorTE : GeneratorTE
     public override void MachineUpdate()
     {
         // If powered off and it was not a manual action, try finding fuel and turn of if so
-        if (!PoweredOn && !ManuallyTurnedOff)
+        if (!IsOnFrame && IsEnabledByPlayer)
         {
             bool fuelFound = false;
             foreach (Item item in Inventory)
@@ -77,7 +77,7 @@ public class BurnerGeneratorTE : GeneratorTE
         if (ConsumedItem.IsAir)
         {
             bool fuelFound = false;
-            if (PoweredOn)
+            if (IsOnFrame)
             {
                 burnTimer = 0;
 

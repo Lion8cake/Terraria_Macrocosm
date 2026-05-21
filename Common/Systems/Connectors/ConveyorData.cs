@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using Terraria;
 using Terraria.DataStructures;
@@ -7,49 +7,54 @@ namespace Macrocosm.Common.Systems.Connectors;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct ConveyorData : ITileData
-{       
+{
     /// <summary>
     /// <code>
-    ///  -- 00IOYBGR --
-    ///  R = whether the tile has a regular ("red") Pipe.
-    ///  G = whether the tile has a green Pipe.
-    ///  B = whether the tile has a blue Pipe.
-    ///  Y = whether the tile has a yellow Pipe.
-    ///  O = whether the tile has an Outlet. Only valid if R|G|B|Y.
-    ///  I = whether the tile has an Intlet. Only valid if R|G|B|Y.
-    ///  IO == 11 is not valid and must be guarded against.
-    ///  00 = reserved for future use.
-    /// </code> 
-    /// </summary>
-    private BitsByte data;
-
-    /// <summary>
-    /// Attachments:
-    /// <code>
-    /// bit0 = present,
-    /// bit1 = type(0=Dropper,1=Hopper), 
-    /// bits2-3 = rotation(0..3)
+    ///  bits 0-3: pipe mask R/G/B/Y
+    ///  bits 4-5: endpoint mode, 0=None, 1=Inlet, 2=Outlet, 3=reserved
+    ///  bit 6: attachment present
+    ///  bit 7: attachment type, 0=Dropper, 1=Hopper
+    ///  bits 8-9: attachment rotation, 0..3
+    ///  bits 10-15: reserved for future use
     /// </code>
     /// </summary>
+    private ushort data;
 
-    private BitsByte data2;
+    private const ushort RedPipeBit = 1 << 0;
+    private const ushort GreenPipeBit = 1 << 1;
+    private const ushort BluePipeBit = 1 << 2;
+    private const ushort YellowPipeBit = 1 << 3;
+    private const ushort PipeMask = RedPipeBit | GreenPipeBit | BluePipeBit | YellowPipeBit;
+
+    private const int EndpointShift = 4;
+    private const ushort EndpointMask = 0b11 << EndpointShift;
+
+    private const ushort AttachmentBit = 1 << 6;
+    private const ushort AttachmentHopperBit = 1 << 7;
+
+    private const int AttachmentRotationShift = 8;
+    private const ushort AttachmentRotationMask = 0b11 << AttachmentRotationShift;
+
+    private enum ConveyorEndpoint : byte
+    {
+        None = 0,
+        Inlet = 1,
+        Outlet = 2,
+    }
 
     public ConveyorData()
     {
         data = 0;
-        data2 = 0;
     }
 
     public ConveyorData(byte packed)
     {
         data = packed;
-        data2 = 0;
     }
 
     public ConveyorData(ushort packed)
     {
-        data = (byte)(packed & 0xFF);
-        data2 = (byte)(packed >> 8);
+        data = packed;
     }
 
     public ConveyorData(bool red = false, bool green = false, bool blue = false, bool yellow = false, bool outlet = false, bool inlet = false) : this()
@@ -62,40 +67,45 @@ public struct ConveyorData : ITileData
         Inlet = inlet;
     }
 
-    public readonly ushort Packed => (ushort)(data | ((ushort)(byte)data2 << 8));
+    public readonly ushort Packed => data;
 
-    public bool RedPipe { get => data[0]; set => data[0] = value; }
-    public bool GreenPipe { get => data[1]; set => data[1] = value; }
-    public bool BluePipe { get => data[2]; set => data[2] = value; }
-    public bool YellowPipe { get => data[3]; set => data[3] = value; }
-    public bool Outlet { get => AnyPipe && data[4] && !data[5]; set => (data[4], data[5]) = (value && AnyPipe, false); }
-    public bool Inlet { get => AnyPipe && data[5] && !data[4]; set => (data[5], data[4]) = (value && AnyPipe, false); }
-    public bool Attachment { get => data2[0]; set { data2[0] = value; if (!data2[0]) AttachmentRotation = 0; } }
-    public bool AttachmentIsHopper { get => data2[1]; set => data2[1] = value; }
+    public bool RedPipe { readonly get => HasFlag(RedPipeBit); set => SetFlag(RedPipeBit, value); }
+    public bool GreenPipe { readonly get => HasFlag(GreenPipeBit); set => SetFlag(GreenPipeBit, value); }
+    public bool BluePipe { readonly get => HasFlag(BluePipeBit); set => SetFlag(BluePipeBit, value); }
+    public bool YellowPipe { readonly get => HasFlag(YellowPipeBit); set => SetFlag(YellowPipeBit, value); }
+    public bool Outlet { readonly get => AnyPipe && Endpoint == ConveyorEndpoint.Outlet; set => Endpoint = value && AnyPipe ? ConveyorEndpoint.Outlet : ConveyorEndpoint.None; }
+    public bool Inlet { readonly get => AnyPipe && Endpoint == ConveyorEndpoint.Inlet; set => Endpoint = value && AnyPipe ? ConveyorEndpoint.Inlet : ConveyorEndpoint.None; }
+    public bool Attachment { readonly get => HasFlag(AttachmentBit); set { SetFlag(AttachmentBit, value); if (!value) AttachmentRotation = 0; } }
+    public bool AttachmentIsHopper { readonly get => HasFlag(AttachmentHopperBit); set => SetFlag(AttachmentHopperBit, value); }
     public byte AttachmentRotation
     {
-        get => (byte)(((data2[2] ? 1 : 0) | (data2[3] ? 2 : 0)) & 0b11);
+        readonly get => (byte)((data & AttachmentRotationMask) >> AttachmentRotationShift);
         set
         {
             byte masked = (byte)(value & 0b11);
-            data2[2] = (masked & 0b01) != 0;
-            data2[3] = (masked & 0b10) != 0;
+            data = (ushort)((data & ~AttachmentRotationMask) | (masked << AttachmentRotationShift));
         }
     }
 
-    public bool Dropper { get => Attachment && !AttachmentIsHopper; set { Attachment = value; AttachmentIsHopper = false; if (!value) AttachmentRotation = 0; } }
-    public bool Hopper { get => Attachment && AttachmentIsHopper; set { Attachment = value; AttachmentIsHopper = true; if (!value) AttachmentRotation = 0; } }
+    public bool Dropper { readonly get => Attachment && !AttachmentIsHopper; set { Attachment = value; AttachmentIsHopper = false; if (!value) AttachmentRotation = 0; } }
+    public bool Hopper { readonly get => Attachment && AttachmentIsHopper; set { Attachment = value; AttachmentIsHopper = value; if (!value) AttachmentRotation = 0; } }
 
-    public bool AnyPipe => RedPipe || GreenPipe || BluePipe || YellowPipe;
-    public int PipeCount => (RedPipe ? 1 : 0) + (GreenPipe ? 1 : 0) + (BluePipe ? 1 : 0) + (YellowPipe ? 1 : 0);
+    public readonly bool AnyPipe => (data & PipeMask) != 0;
+    public readonly int PipeCount => (RedPipe ? 1 : 0) + (GreenPipe ? 1 : 0) + (BluePipe ? 1 : 0) + (YellowPipe ? 1 : 0);
 
-    public bool IsValidForConveyorNode(ConveyorPipeType? pipe = null)
+    private ConveyorEndpoint Endpoint
+    {
+        readonly get => (ConveyorEndpoint)((data & EndpointMask) >> EndpointShift);
+        set => data = (ushort)((data & ~EndpointMask) | ((ushort)value << EndpointShift));
+    }
+
+    public readonly bool IsValidForConveyorNode(ConveyorPipeType? pipe = null)
     {
         bool hasPipe = pipe.HasValue ? HasPipe(pipe.Value) : AnyPipe;
         return (hasPipe && (Inlet || Outlet)) || Attachment;
     }
 
-    public bool HasPipe(ConveyorPipeType type)
+    public readonly bool HasPipe(ConveyorPipeType type)
     {
         return type switch
         {
@@ -130,11 +140,25 @@ public struct ConveyorData : ITileData
             default: break;
         }
 
+        if (!AnyPipe)
+            Endpoint = ConveyorEndpoint.None;
     }
 
     public void ClearAll()
     {
         data = 0;
-        data2 = 0;
+    }
+
+    private readonly bool HasFlag(ushort flag)
+    {
+        return (data & flag) != 0;
+    }
+
+    private void SetFlag(ushort flag, bool value)
+    {
+        if (value)
+            data |= flag;
+        else
+            data = (ushort)(data & ~flag);
     }
 }

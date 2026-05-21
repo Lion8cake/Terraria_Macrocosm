@@ -1,7 +1,4 @@
-using Macrocosm.Common.Systems.Connectors;
-using Macrocosm.Common.Utils;
 using Terraria;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace Macrocosm.Content.Items.Connectors;
@@ -19,21 +16,10 @@ public class Hopper : ModItem
         Item.height = 20;
         Item.maxStack = Item.CommonMaxStack;
         Item.value = Item.buyPrice(copper: 10);
-        Item.useStyle = ItemUseStyleID.Swing;
-        Item.useTurn = true;
-        Item.useTime = 10;
-        Item.useAnimation = 10;
-        Item.autoReuse = true;
         Item.consumable = true;
         Item.mech = true;
-    }
-
-    public override bool? UseItem(Player player)
-    {
-        if (player.whoAmI == Main.myPlayer)
-            return ConveyorSystem.PlaceHopper(player.TargetCoords());
-
-        return null;
+        Item.ammo = Type;
+        Item.notAmmo = true;
     }
 }
 

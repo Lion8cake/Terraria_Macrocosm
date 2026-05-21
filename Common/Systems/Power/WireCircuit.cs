@@ -3,6 +3,7 @@ using Macrocosm.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria.Localization;
 
 namespace Macrocosm.Common.Systems.Power;
 
@@ -37,7 +38,6 @@ public class WireCircuit : Circuit<MachineTE>
         float totalGeneratorOutput = 0f;
         float totalConsumerDemand = 0f;
         float totalBatteryStoredEnergy = 0f;
-        float totalBatteryCapacity = 0f;
 
         var generators = new List<GeneratorTE>();
         var consumers = new List<ConsumerTE>();
@@ -53,13 +53,13 @@ public class WireCircuit : Circuit<MachineTE>
             else if (node is ConsumerTE consumer)
             {
                 consumers.Add(consumer);
-                totalConsumerDemand += consumer.MaxPower;
+                totalConsumerDemand += consumer.PowerDemand;
             }
             else if (node is BatteryTE battery)
             {
                 batteries.Add(battery);
+                battery.PowerFlow = 0f;
                 totalBatteryStoredEnergy += battery.StoredEnergy;
-                totalBatteryCapacity += battery.EnergyCapacity;
             }
         }
 
@@ -79,7 +79,7 @@ public class WireCircuit : Circuit<MachineTE>
             if (totalBatteryStoredEnergy >= energyNeeded)
             {
                 DistributePowerToConsumers(consumers, 1f);
-                DrawPowerFromBatteries(batteries, energyNeeded);
+                DrawPowerFromBatteries(batteries, energyNeeded, deltaTime);
             }
             else
             {
@@ -87,7 +87,7 @@ public class WireCircuit : Circuit<MachineTE>
                 float circuitPowerFactor = totalAvailablePower / totalConsumerDemand;
 
                 DistributePowerToConsumers(consumers, circuitPowerFactor);
-                DrainAllBatteries(batteries);
+                DrawPowerFromBatteries(batteries, totalBatteryStoredEnergy, deltaTime);
             }
         }
     }
@@ -97,7 +97,7 @@ public class WireCircuit : Circuit<MachineTE>
     {
         foreach (var consumer in consumers)
         {
-            consumer.InputPower = consumer.MaxPower * circuitPowerFactor;
+            consumer.InputPower = consumer.PowerDemand * circuitPowerFactor;
         }
     }
 
@@ -120,16 +120,13 @@ public class WireCircuit : Circuit<MachineTE>
 
                 if (energyToStore > 0f)
                 {
-                    battery.PowerFlow = energyToStore;
+                    battery.PowerFlow += energyToStore / deltaTime;
                     battery.StoredEnergy += energyToStore;
                     totalEnergyToStore -= energyToStore;
                     anyStored = true;
 
                     if (battery.StoredEnergy >= battery.EnergyCapacity)
-                    {
                         availableBatteries.Remove(battery);
-                        battery.PowerFlow = 0;
-                    }
                 }
             }
 
@@ -138,7 +135,7 @@ public class WireCircuit : Circuit<MachineTE>
         }
     }
 
-    private void DrawPowerFromBatteries(List<BatteryTE> batteries, float totalEnergyNeeded)
+    private void DrawPowerFromBatteries(List<BatteryTE> batteries, float totalEnergyNeeded, float deltaTime)
     {
         var availableBatteries = batteries.Where(b => b.StoredEnergy > 0f).ToList();
 
@@ -154,16 +151,13 @@ public class WireCircuit : Circuit<MachineTE>
 
                 if (energyToDraw > 0f)
                 {
-                    battery.PowerFlow = -energyToDraw;
+                    battery.PowerFlow -= energyToDraw / deltaTime;
                     battery.StoredEnergy -= energyToDraw;
                     totalEnergyNeeded -= energyToDraw;
                     anyDrawn = true;
 
                     if (battery.StoredEnergy <= 0f)
-                    {
                         availableBatteries.Remove(battery);
-                        battery.PowerFlow = 0;
-                    }
                 }
             }
 
@@ -174,12 +168,38 @@ public class WireCircuit : Circuit<MachineTE>
 
     private static float GetDeltaTime(int updateRate) => MathF.Max(1, updateRate) / 60f;
 
-    private void DrainAllBatteries(List<BatteryTE> batteries)
+    public string GetPowerInfo()
     {
-        foreach (var battery in batteries)
+        float totalGeneratorOutput = 0f;
+        float totalConsumerDemand = 0f;
+        float totalBatteryStoredEnergy = 0f;
+        float totalBatteryCapacity = 0f;
+        float totalBatteryFlow = 0f;
+
+        foreach (var node in nodes)
         {
-            battery.PowerFlow = 0f;
-            battery.StoredEnergy = 0f;
+            switch (node)
+            {
+                case GeneratorTE generator:
+                    totalGeneratorOutput += generator.GeneratedPower;
+                    break;
+                case ConsumerTE consumer:
+                    totalConsumerDemand += consumer.PowerDemand;
+                    break;
+                case BatteryTE battery:
+                    totalBatteryStoredEnergy += battery.StoredEnergy;
+                    totalBatteryCapacity += battery.EnergyCapacity;
+                    totalBatteryFlow += battery.PowerFlow;
+                    break;
+            }
         }
+
+        return Language.GetText($"Mods.Macrocosm.Machines.Common.PowerInfo.Circuit").Format(
+            $"{totalGeneratorOutput:F2}",
+            $"{totalConsumerDemand:F2}",
+            $"{totalBatteryStoredEnergy:F2}",
+            $"{totalBatteryCapacity:F2}",
+            $"{totalBatteryFlow:+0.00;-0.00;0.00}"
+        );
     }
 }

@@ -46,8 +46,45 @@ public class OilRefineryTE : ConsumerTE
     public float ExtractProgress => inputExtractTimer / ExtractRate;
     public float RefineProgress => refineTimer / RefineRate;
 
+    public override float PowerDemand => IsEnabledByPlayer && (CanExtractInput || CanRefineWork || CanFillOutputContainer) ? MaxPower : 0f;
 
-    public bool CanRefine => PoweredOn && InputTankAmount > 0f && OutputTankAmount < ResultTankCapacity;
+    private bool CanExtractInput
+    {
+        get
+        {
+            if (InputTankAmount >= SourceTankCapacity)
+                return false;
+
+            for (int i = 2; i < Inventory.Size; i++)
+            {
+                if (ItemSets.LiquidExtractData[Inventory[i].type].Valid)
+                    return true;
+            }
+
+            return false;
+        }
+    }
+
+    private bool CanRefineWork => InputTankAmount > 0f && OutputTankAmount < ResultTankCapacity;
+
+    private bool CanFillOutputContainer
+    {
+        get
+        {
+            LiquidContainerData data = ItemSets.LiquidContainerData[ContainerSlot.type];
+            if (!data.Valid || !data.Empty || ContainerSlot.IsAir || OutputTankAmount <= 0f)
+                return false;
+
+            int fillType = LiquidContainerData.GetFillType(ItemSets.LiquidContainerData, LiquidLoader.LiquidType<RocketFuel>(), ContainerSlot.type);
+            if (fillType <= 0)
+                return false;
+
+            Item filledItem = new(fillType);
+            return Inventory.TryPlacingItem(ref filledItem, justCheck: true, sound: false, serverSync: false, startIndex: 1, endIndex: 1);
+        }
+    }
+
+    public bool CanRefine => IsRunning && CanRefineWork;
 
     public void StartRefining()
     {
@@ -98,9 +135,9 @@ public class OilRefineryTE : ConsumerTE
         {
             Item inputItem = Inventory[i];
             LiquidExtractData data = ItemSets.LiquidExtractData[inputItem.type];
-            if (PoweredOn && InputTankAmount < SourceTankCapacity && data.Valid)
+            if (IsRunning && InputTankAmount < SourceTankCapacity && data.Valid)
             {
-                inputExtractTimer += 1f * PowerProgress;
+                inputExtractTimer += 1f * RatedPowerProgress;
                 if (inputExtractTimer >= ExtractRate)
                 {
                     inputExtractTimer -= ExtractRate;
@@ -122,7 +159,7 @@ public class OilRefineryTE : ConsumerTE
 
         if (refining)
         {
-            refineTimer += 1f * PowerProgress;
+            refineTimer += 1f * RatedPowerProgress;
             if (refineTimer >= RefineRate)
             {
                 refineTimer -= RefineRate;
@@ -139,10 +176,9 @@ public class OilRefineryTE : ConsumerTE
 
     private void FillContainers()
     {
-        LiquidContainerData data = ItemSets.LiquidContainerData[ContainerSlot.type];
-        if (data.Valid && data.Empty && OutputTankAmount > 0f && !ContainerSlot.IsAir && OutputSlot.stack <= OutputSlot.maxStack)
+        if (IsRunning && CanFillOutputContainer)
         {
-            fillTimer += 1f * PowerProgress;
+            fillTimer += 1f * RatedPowerProgress;
             if (fillTimer >= FillRate)
             {
                 fillTimer -= FillRate;

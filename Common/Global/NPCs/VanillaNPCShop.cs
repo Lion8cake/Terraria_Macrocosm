@@ -21,6 +21,7 @@ public class VanillaNPCShop : GlobalNPC
                 break;
 
             case NPCID.Steampunker:
+                shop.Add<ConveyorAttachmentTool>();
                 shop.Add<Conveyor>();
                 shop.Add<ConveyorInlet>();
                 shop.Add<ConveyorOutlet>();
