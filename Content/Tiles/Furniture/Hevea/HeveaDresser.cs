@@ -42,8 +42,6 @@ public class HeveaDresser : ModTile
         ];
         TileObjectData.newTile.LavaDeath = false;
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaDresser>());
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 
         AddMapEntry(HeveaFurnitureUtils.MapColor, Language.GetText("ItemName.Dresser"));

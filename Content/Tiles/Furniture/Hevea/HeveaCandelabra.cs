@@ -33,8 +33,6 @@ public class HeveaCandelabra : ModTile, IToggleableTile
         TileObjectData.newTile.CoordinateHeights = [16, 18];
 
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaCandelabra>());
 
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
         AdjTiles = [TileID.Candelabras];

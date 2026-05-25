@@ -30,8 +30,6 @@ public class HeveaClock : ModTile
         TileObjectData.newTile.Origin = new Point16(0, 4);
         TileObjectData.newTile.DrawYOffset = 2;
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaClock>());
 
         AddMapEntry(HeveaFurnitureUtils.MapColor, Language.GetText("ItemName.GrandfatherClock"));
     }

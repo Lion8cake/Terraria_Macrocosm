@@ -22,8 +22,6 @@ public class HeveaSink : ModTile
         TileObjectData.newTile.DrawYOffset = 2;
         TileObjectData.newTile.Origin = new Point16(0, 1);
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaSink>());
 
         AddMapEntry(HeveaFurnitureUtils.MapColor, Language.GetText("MapObject.Sink"));
 

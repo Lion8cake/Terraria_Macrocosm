@@ -19,8 +19,6 @@ public class HeveaBathtub : ModTile
         TileObjectData.newTile.CopyFrom(TileObjectData.Style4x2);
         TileObjectData.newTile.Origin = new Point16(1, 1);
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaBathtub>());
 
         AddMapEntry(HeveaFurnitureUtils.MapColor, Language.GetText("ItemName.Bathtub"));
 

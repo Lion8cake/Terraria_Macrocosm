@@ -26,14 +26,9 @@ public class HeveaCandle : ModTile, IToggleableTile
         Main.tileLavaDeath[Type] = true;
 
         TileObjectData.newTile.CopyFrom(TileObjectData.GetTileData(TileID.Candles, 0));
-
-        // This candle is higher than 16 pixels, but still fits into a 1x1 tile
-        TileObjectData.newTile.CoordinateHeights = [26];
-        TileObjectData.newTile.DrawYOffset = -10;
+        TileObjectData.newTile.CoordinateHeights = [18];
 
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaCandle>());
 
         AdjTiles = [TileID.Candles];
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);

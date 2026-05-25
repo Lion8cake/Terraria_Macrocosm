@@ -41,8 +41,6 @@ public class HeveaToilet : ModTile
         TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceRight;
         TileObjectData.addAlternate(1);
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaToilet>());
 
         AddMapEntry(HeveaFurnitureUtils.MapColor, Language.GetText("MapObject.Toilet"));
     }

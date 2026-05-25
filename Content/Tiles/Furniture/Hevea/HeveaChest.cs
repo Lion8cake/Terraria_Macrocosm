@@ -58,8 +58,6 @@ public class HeveaChest : ModTile
 
         AddMapEntry(HeveaFurnitureUtils.MapColor, CreateMapEntryName(), MapChestName);
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaChest>());
 
         
     }

@@ -28,8 +28,6 @@ public class HeveaTable : ModTile
         TileObjectData.newTile.CoordinateHeights = [16, 16];
         TileObjectData.newTile.DrawYOffset = 2;
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaTable>());
 
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 

@@ -3637,3 +3637,98 @@ CrudeWireWrenchRed: {
 	DisplayName: Crude Wire Wrench Red
 	Tooltip: ""
 }
+
+HeveaBathtub: {
+	DisplayName: Hevea Bathtub
+	Tooltip: ""
+}
+
+HeveaBed: {
+	DisplayName: Hevea Bed
+	Tooltip: ""
+}
+
+HeveaBookcase: {
+	DisplayName: Hevea Bookcase
+	Tooltip: ""
+}
+
+HeveaCandelabra: {
+	DisplayName: Hevea Candelabra
+	Tooltip: ""
+}
+
+HeveaCandle: {
+	DisplayName: Hevea Candle
+	Tooltip: ""
+}
+
+HeveaChair: {
+	DisplayName: Hevea Chair
+	Tooltip: ""
+}
+
+HeveaChandelier: {
+	DisplayName: Hevea Chandelier
+	Tooltip: ""
+}
+
+HeveaChest: {
+	DisplayName: Hevea Chest
+	Tooltip: ""
+}
+
+HeveaClock: {
+	DisplayName: Hevea Clock
+	Tooltip: ""
+}
+
+HeveaDoor: {
+	DisplayName: Hevea Door
+	Tooltip: ""
+}
+
+HeveaDresser: {
+	DisplayName: Hevea Dresser
+	Tooltip: ""
+}
+
+HeveaLamp: {
+	DisplayName: Hevea Lamp
+	Tooltip: ""
+}
+
+HeveaLantern: {
+	DisplayName: Hevea Lantern
+	Tooltip: ""
+}
+
+HeveaPiano: {
+	DisplayName: Hevea Piano
+	Tooltip: ""
+}
+
+HeveaSink: {
+	DisplayName: Hevea Sink
+	Tooltip: ""
+}
+
+HeveaSofa: {
+	DisplayName: Hevea Sofa
+	Tooltip: ""
+}
+
+HeveaTable: {
+	DisplayName: Hevea Table
+	Tooltip: ""
+}
+
+HeveaToilet: {
+	DisplayName: Hevea Toilet
+	Tooltip: ""
+}
+
+HeveaWorkbench: {
+	DisplayName: Hevea Workbench
+	Tooltip: ""
+}

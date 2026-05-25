@@ -27,8 +27,6 @@ public class HeveaLamp : ModTile, IToggleableTile
 
         TileObjectData.newTile.CopyFrom(TileObjectData.GetTileData(TileID.Lamps, 0));
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaLamp>());
 
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
         AdjTiles = [TileID.Lamps];

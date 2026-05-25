@@ -70,8 +70,7 @@ public class HeveaDoorOpen : ModTile
         TileObjectData.newAlternate.Direction = TileObjectDirection.PlaceLeft;
         TileObjectData.addAlternate(1);
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaDoor>());
+        RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaDoor>());
     }
 
     public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings)

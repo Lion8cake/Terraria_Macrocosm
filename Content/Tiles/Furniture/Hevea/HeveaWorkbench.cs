@@ -26,8 +26,6 @@ public class HeveaWorkbench : ModTile
         TileObjectData.newTile.CopyFrom(TileObjectData.Style2x1);
         TileObjectData.newTile.CoordinateHeights = [16];
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaWorkbench>());
 
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
 

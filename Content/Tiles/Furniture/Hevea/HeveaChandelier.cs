@@ -26,8 +26,6 @@ public class HeveaChandelier : ModTile, IToggleableTile
 
         TileObjectData.newTile.CopyFrom(TileObjectData.GetTileData(TileID.Chandeliers, 0));
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaChandelier>());
 
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
         AdjTiles = [TileID.Chandeliers];

@@ -20,8 +20,6 @@ public class HeveaBookcase : ModTile
         TileObjectData.newTile.CopyFrom(TileObjectData.Style3x4);
         TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 18];
         TileObjectData.addTile(Type);
-        // TODO: Uncomment when Hevea furniture items are added.
-        // RegisterItemDrop(ModContent.ItemType<Items.Furniture.Hevea.HeveaBookcase>());
 
         HitSound = SoundID.Dig;
         DustType = ModContent.DustType<HeveaDust>();
