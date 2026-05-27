@@ -12,7 +12,7 @@ public class OreExcavatorTE : BaseDrillTE
     private SlotId activeSoundSlot = SlotId.Invalid;
 
     public override MachineTile MachineTile => ModContent.GetInstance<OreExcavator>();
-    protected override float ExcavateRate => 60;
+    protected override float ExcavateRate => 240;
     public override int InventorySize => 50;
 
     // Sample area: matches machine footprint width (7), 10 rows deep

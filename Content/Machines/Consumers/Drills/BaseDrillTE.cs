@@ -162,38 +162,44 @@ public abstract class BaseDrillTE : ConsumerTE
             return;
 
         int total = SampledItems.Length;
-        Player nearest = Utility.GetClosestPlayer(Position, MachineTile.Width * 16, MachineTile.Height * 16);
+        int roll = Main.rand.Next(total);
+        int selectedItemId = 0;
+        foreach (var (itemId, count) in counts)
+        {
+            if (roll < count)
+            {
+                selectedItemId = itemId;
+                break;
+            }
+
+            roll -= count;
+        }
+
+        if (selectedItemId <= 0)
+            return;
+
         Vector2 dropPosition = Position.ToWorldCoordinates();
         TileObjectData tileData = TileObjectData.GetTileData(Main.tile[Position]);
         if (tileData is not null)
             dropPosition = new(dropPosition.X + tileData.Width * 16 / 2f, dropPosition.Y + (tileData.Height + 3) * 16);
 
-        foreach (var (itemId, count) in counts)
-        {
-            // Drop probability proportional to how much of the grid this tile occupies
-            float chance = (float)count / total;
-            if (Main.rand.NextFloat() < chance)
-            {
-                int amt = Main.rand.Next(1, 4);
-                Item item = new(itemId, amt);
-                bool placed = InventorySize > 0 && Inventory.TryPlacingItem(ref item, sound: false);
+        Item item = new(selectedItemId);
+        bool placed = InventorySize > 0 && Inventory.TryPlacingItem(ref item, sound: false);
 
-                if (placed)
-                {
-                    Item clone = new(itemId, amt);
-                    Particle.Create<ItemTransferParticle>((p) =>
-                    {
-                        p.StartPosition = dropPosition + Main.rand.NextVector2Circular(32, 16);
-                        p.EndPosition   = dropPosition + new Vector2(0, -96) + Main.rand.NextVector2Circular(16, 16);
-                        p.ItemType      = clone.type;
-                        p.TimeToLive    = Main.rand.Next(60, 80);
-                    });
-                }
-                else
-                {
-                    CommonCode.DropItem(dropPosition, new EntitySource_TileEntity(this), itemId, amt);
-                }
-            }
+        if (placed)
+        {
+            Item clone = new(selectedItemId);
+            Particle.Create<ItemTransferParticle>((p) =>
+            {
+                p.StartPosition = dropPosition + Main.rand.NextVector2Circular(32, 16);
+                p.EndPosition   = dropPosition + new Vector2(0, -96) + Main.rand.NextVector2Circular(16, 16);
+                p.ItemType      = clone.type;
+                p.TimeToLive    = Main.rand.Next(60, 80);
+            });
+        }
+        else
+        {
+            CommonCode.DropItem(dropPosition, new EntitySource_TileEntity(this), selectedItemId, 1);
         }
     }
 

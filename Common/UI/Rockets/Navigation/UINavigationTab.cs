@@ -159,6 +159,7 @@ public class UINavigationTab : UIElement, ITabUIElement, IRocketUIDataConsumer
         UpdateWorldInfoPanel();
         UpdateLaunchLocationsList();
         UpdateChecklist();
+        UpdateCargoPreview();
         UpdateMapTarget();
         UpdateLaunchButton();
     }
@@ -210,6 +211,11 @@ public class UINavigationTab : UIElement, ITabUIElement, IRocketUIDataConsumer
         flightChecklist.TargetLaunchpad = targetLaunchPad;
         flightChecklist.TargetOrbitSubworld = targetOrbitSubworld;
         flightChecklist.SelectedSpawnLocation = selectedSpawnLocation;
+    }
+
+    private void UpdateCargoPreview()
+    {
+        CargoPreview.FuelCost = target is null ? 0f : Rocket.GetFuelCost(targetOrbitSubworld?.ID ?? target.TargetID);
     }
 
     private void UpdateMapTarget()

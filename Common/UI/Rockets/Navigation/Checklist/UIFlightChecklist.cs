@@ -36,7 +36,7 @@ public class UIFlightChecklist : UIScrollableListPanel, IRocketUIDataConsumer
         DifferentTargetLaunchCondition = new ChecklistCondition("DifferentTarget", () => !Rocket.AtCurrentLaunchpad(TargetLaunchpad, MapTarget.TargetID));
         LaunchpadVacantCondition = new ChecklistCondition("VacantLaunchpad", () => SelectedSpawnLocation || TargetOrbitSubworld is not null || TargetLaunchpad is not null && !TargetLaunchpad.HasActiveRocket);
 
-        CommonLaunchConditions.Add(new ChecklistCondition("Fuel", () => Rocket.Fuel >= Rocket.GetFuelCost(MapTarget.TargetID)));
+        CommonLaunchConditions.Add(new ChecklistCondition("Fuel", () => Rocket.Fuel >= Rocket.GetFuelCost(TargetOrbitSubworld?.ID ?? MapTarget.TargetID)));
         CommonLaunchConditions.Add(new ChecklistCondition("Obstruction", () => Rocket.CheckObstruction(downwards: Rocket.TargetIsParentSubworld(MapTarget.TargetID)), checkPeriod: 10));
 
         CommonLaunchConditions.Add(new ChecklistCondition("Boss", () => !Utility.BossActive && !Utility.MoonLordIncoming, hideIfMet: true));

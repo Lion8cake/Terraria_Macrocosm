@@ -23,9 +23,9 @@ public class SolarPanelTile : ModItem
     public override void AddRecipes()
     {
         CreateRecipe(6)
-           .AddIngredient<SolarCell>(4)
-           .AddIngredient(ItemID.Glass, 3)
-           .AddIngredient(ItemID.Wire, 4)
+           .AddIngredient<SolarCell>(6)
+           .AddIngredient(ItemID.Glass, 2)
+           .AddIngredient(ItemID.Wire, 6)
            .AddTile<Tiles.Crafting.Fabricator>()
            .Register();
     }

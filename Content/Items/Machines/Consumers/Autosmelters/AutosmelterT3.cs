@@ -23,10 +23,9 @@ public class AutosmelterT3 : ModItem
     {
         CreateRecipe()
             .AddIngredient(ItemID.LunarBar, 20)
-            .AddIngredient<SteelBar>(10)
-            .AddIngredient<Plastic>(7)
             .AddIngredient<AdvancedCircuitBoard>(10)
-            .AddIngredient(ItemID.Wire, 10)
+            .AddIngredient<Plastic>(7)
+            .AddIngredient<SteelBar>(5)
             .AddTile<Fabricator>()
             .Register();
     }

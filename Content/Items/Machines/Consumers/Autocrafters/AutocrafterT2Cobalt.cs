@@ -26,10 +26,8 @@ public class AutocrafterT2Cobalt : ModItem
     {
         CreateRecipe()
             .AddIngredient(ItemID.CobaltBar, 15)
-            .AddIngredient<AluminumBar>(10)
-            .AddIngredient<Gear>(4)
-            .AddIngredient<AdvancedCircuitBoard>(5)
-            .AddIngredient(ItemID.Wire, 10)
+            .AddIngredient<AdvancedCircuitBoard>(10)
+            .AddIngredient<SteelBar>(5)
             .AddTile<Fabricator>()
             .Register();
     }

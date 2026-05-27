@@ -27,7 +27,7 @@ public class Plastic : ModItem
         CreateRecipe()
             .AddIngredient<Coal>(3)
             .AddIngredient<OilShale>(1)
-            .AddTile(TileID.Bottles)
+            .AddTile<Tiles.Crafting.Fabricator>()
             .Register();
     }
 }

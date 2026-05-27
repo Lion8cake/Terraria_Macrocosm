@@ -189,7 +189,7 @@ public class MoonOrbitSky : CustomSky, ILoadable
             spriteBatch.End();
             spriteBatch.Begin(BlendState.NonPremultiplied, state);
 
-            if (Background3D)
+            if (Background3D && global::Macrocosm.Common.Config.ClientConfig.Instance.Use3DCelestialBodies)
                 DrawMoon3D(spriteBatch);
             else
                 DrawMoon2D(spriteBatch);

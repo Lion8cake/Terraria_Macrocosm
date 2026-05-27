@@ -1,4 +1,3 @@
-using Macrocosm.Content.Items.Bars;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,7 +23,7 @@ public class Gear : ModItem
     public override void AddRecipes()
     {
         CreateRecipe()
-            .AddIngredient<SteelBar>(2)
+            .AddIngredient(ItemID.IronBar, 2)
             .AddTile(TileID.Anvils)
             .Register();
     }

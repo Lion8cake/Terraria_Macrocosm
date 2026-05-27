@@ -15,6 +15,7 @@ namespace Macrocosm.Common.UI.Rockets.Cargo;
 public class UICargoFuelPreview : UIPanel, IRocketUIDataConsumer
 {
     public Rocket Rocket { get; set; } = new();
+    public float FuelCost { get; set; }
 
     private UIText title;
 
@@ -85,7 +86,7 @@ public class UICargoFuelPreview : UIPanel, IRocketUIDataConsumer
         }
 
         string target = Main.LocalPlayer.GetModPlayer<RocketPlayer>().TargetWorld;
-        float fuelCost = string.IsNullOrEmpty(target) ? 0f : RocketFuelLookup.GetFuelCost(MacrocosmSubworld.CurrentID, target);
+        float fuelCost = string.IsNullOrEmpty(target) ? 0f : FuelCost;
         float clampedCost = MathHelper.Clamp(fuelCost, 0, Rocket.FuelCapacity);
 
         float availableFuelLevel = Rocket.Fuel / Rocket.FuelCapacity;

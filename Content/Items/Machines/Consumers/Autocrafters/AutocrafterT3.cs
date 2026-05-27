@@ -27,10 +27,9 @@ public class AutocrafterT3 : ModItem
     {
         CreateRecipe()
             .AddIngredient(ItemID.LunarBar, 20)
-            .AddIngredient<SteelBar>(15)
+            .AddIngredient<AdvancedCircuitBoard>(15)
             .AddIngredient<Plastic>(12)
-            .AddIngredient<AdvancedCircuitBoard>(12)
-            .AddIngredient(ItemID.Wire, 10)
+            .AddIngredient<SteelBar>(10)
             .AddTile<Fabricator>()
             .Register();
     }

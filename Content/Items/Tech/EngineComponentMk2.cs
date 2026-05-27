@@ -26,15 +26,8 @@ public class EngineComponentMk2 : ModItem
     {
         CreateRecipe()
             .AddIngredient<SteelBar>(20)
-            .AddIngredient(ItemID.CobaltBar, 20)
-            .AddIngredient(ItemID.TungstenBar, 10)
-            .AddTile<Tiles.Crafting.Fabricator>()
-            .Register();
-
-        CreateRecipe()
-            .AddIngredient<SteelBar>(20)
-            .AddIngredient(ItemID.PalladiumBar, 20)
             .AddIngredient(ItemID.SilverBar, 10)
+            .AddIngredient(ItemID.LunarBar, 5)
             .AddTile<Tiles.Crafting.Fabricator>()
             .Register();
     }

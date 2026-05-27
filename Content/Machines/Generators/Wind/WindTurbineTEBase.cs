@@ -2,7 +2,6 @@ using Macrocosm.Common.Systems.Power;
 using Macrocosm.Common.Utils;
 using System;
 using Terraria;
-using Terraria.GameContent.Events;
 
 namespace Macrocosm.Content.Machines.Generators.Wind;
 
@@ -25,11 +24,7 @@ public abstract class WindTurbineTEBase : GeneratorTE
         if (windSpeed <= 0f)
             return 0f;
 
-        bool boosted = Main.IsItAHappyWindyDay || Main.IsItStorming || Sandstorm.Happening;
-        float efficiencyPercent = boosted && windSpeed >= 20f
-            ? 8f * MathF.Sqrt(windSpeed - 20f) + 100f // y = 8 * sqrt(x-20) + 100 
-            : 47f * MathF.Pow(windSpeed, 1 / 4f);     // y = 47 * root4(x)
-                                                  
-        return efficiencyPercent / 100f;
+        float efficiencyPercent = 100f / (1f + 100f * MathF.Exp(-2f * windSpeed / 3f));
+        return Math.Clamp(efficiencyPercent / 100f, 0f, 1f);
     }
 }

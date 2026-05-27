@@ -706,7 +706,7 @@ public partial class Rocket : IInventoryOwner
 
     public bool TargetIsParentSubworld(string targetWorld) => OrbitSubworld.IsOrbitSubworld(CurrentWorld) && OrbitSubworld.GetParentID(CurrentWorld) == targetWorld;
 
-    public float GetFuelCost(string targetWorld) => RocketFuelLookup.GetFuelCost(MacrocosmSubworld.CurrentID, targetWorld);
+    public float GetFuelCost(string targetWorld) => RocketFuelLookup.GetFuelCost(string.IsNullOrEmpty(CurrentWorld) ? MacrocosmSubworld.CurrentID : CurrentWorld, targetWorld);
 
     /// <summary> Checks whether the flight path is obstructed by solid blocks </summary>
     public bool CheckObstruction(bool downwards)

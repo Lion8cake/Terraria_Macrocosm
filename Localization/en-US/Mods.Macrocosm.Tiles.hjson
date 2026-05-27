@@ -44,8 +44,8 @@ DianiteBar.MapEntry: Dianite Bar
 AluminumBar.MapEntry: Aluminum Bar
 ArtemiteBar.MapEntry: Artemite Bar
 SteelBar.MapEntry: Steel Bar
-SolarPanelLarge.MapEntry: Solar Panel
-SolarPanelSmall.MapEntry: Solar Panel
+SolarPanelLarge.MapEntry: Medium Solar Panel
+SolarPanelSmall.MapEntry: Small Solar Panel
 OilRefinery.MapEntry: Oil Refinery
 SilicaCrimsand.MapEntry: Silica Crimsand
 SilicaEbonsand.MapEntry: Silica Ebonsand
@@ -71,7 +71,7 @@ PowerJunction.MapEntry: Power Junction
 Computer.MapEntry: Computer
 IndustrialCrate.MapEntry: Industrial Crate
 ConstructionLight.MapEntry: Construction Light
-OreExcavator.MapEntry: Ore Excavator
+OreExcavator.MapEntry: Tier 2 Excavator
 Fabricator.MapEntry: Fabricator
 IndustrialGurney.MapEntry: Gurney
 CheeseBlock.MapEntry: Cheese Block
@@ -80,8 +80,8 @@ IndustrialCeilingMonitor.MapEntry: Ceiling Monitor
 IndustrialDeskMonitor.MapEntry: Desk Monitor
 IndustrialWallMonitor.MapEntry: Wall Monitor
 Boombox.MapEntry: Boombox
-WindTurbineLarge.MapEntry: Wind Turbine
-WindTurbineSmall.MapEntry: Wind Turbine
+WindTurbineLarge.MapEntry: Large Wind Turbine
+WindTurbineSmall.MapEntry: Medium Wind Turbine
 IndustrialControlPanel.MapEntry: Control Panel
 IndustrialControlStation.MapEntry: Control Station
 IndustrialDeskClock.MapEntry: Desk Clock
@@ -105,19 +105,19 @@ ApolloLander.MapEntry: Apollo Lander
 ACUnit.MapEntry: AC Unit
 AirVent.MapEntry: Air Vent
 RegolithChest.MapEntry: Regolith Chest
-AutocrafterT1.MapEntry: Autocrafter
-AutocrafterT2.MapEntry: Autocrafter
-AutocrafterT3.MapEntry: Autocrafter
-OreDrill.MapEntry: Ore Drill
+AutocrafterT1.MapEntry: Tier 1 Assembler
+AutocrafterT2.MapEntry: Tier 2 Assembler
+AutocrafterT3.MapEntry: Tier 3 Assembler
+OreDrill.MapEntry: Tier 1 Excavator
 Pumpjack.MapEntry: Pumpjack
-AutosmelterT1.MapEntry: Autosmelter
-AutosmelterT2.MapEntry: Autosmelter
-AutosmelterT3.MapEntry: Autosmelter
-SolarPanelExtraLarge.MapEntry: Solar Panel Extra Large
+AutosmelterT1.MapEntry: Tier 1 Smelter
+AutosmelterT2.MapEntry: Tier 2 Smelter
+AutosmelterT3.MapEntry: Tier 3 Smelter
+SolarPanelExtraLarge.MapEntry: Large Solar Panel
 OilBarrel.MapEntry: Oil Barrel
 SteelPipe.MapEntry: Steel Pipe
 IndustrialBatteryLarge.MapEntry: Industrial Battery Large
-WindTurbineTiny.MapEntry: Wind Turbine Tiny
+WindTurbineTiny.MapEntry: Small Wind Turbine
 NickelOre.MapEntry: Nickel Ore
 LuminiteCrystalFake.MapEntry: Luminite Crystal
 LuminiteCrystalNatural.MapEntry: Luminite Crystal

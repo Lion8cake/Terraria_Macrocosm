@@ -1,4 +1,3 @@
-using Macrocosm.Content.Items.Bars;
 using Macrocosm.Content.Items.Tech;
 using Terraria;
 using Terraria.ID;
@@ -21,10 +20,8 @@ public class AutosmelterT1 : ModItem
     {
         CreateRecipe()
             .AddIngredient(ItemID.GrayBrick, 10)
-            .AddIngredient<SteelBar>(6)
-            .AddIngredient<Gear>(2)
-            .AddIngredient<PrintedCircuitBoard>()
-            .AddIngredient(ItemID.Wire, 10)
+            .AddIngredient(ItemID.IronBar, 8)
+            .AddIngredient<PrintedCircuitBoard>(4)
             .AddTile(TileID.Anvils)
             .Register();
     }

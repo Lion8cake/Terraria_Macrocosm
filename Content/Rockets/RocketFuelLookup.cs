@@ -6,39 +6,85 @@ namespace Macrocosm.Content.Rockets;
 
 public class RocketFuelLookup : ILoadable
 {
-    private static Dictionary<string, float> fuelLookup;
+    public enum RocketFuelRouteKind
+    {
+        Intraplanetary,
+        Orbital,
+        Interbody
+    }
+
+    public readonly record struct RocketFuelRoute(
+        string Location,
+        string Destination,
+        string LocationParent,
+        string DestinationParent,
+        bool LocationIsOrbit,
+        bool DestinationIsOrbit
+    )
+    {
+        public RocketFuelRouteKind Kind
+        {
+            get
+            {
+                if (LocationParent != DestinationParent)
+                    return RocketFuelRouteKind.Interbody;
+
+                if (LocationIsOrbit || DestinationIsOrbit)
+                    return RocketFuelRouteKind.Orbital;
+
+                return RocketFuelRouteKind.Intraplanetary;
+            }
+        }
+    }
+
+    private static Dictionary<(string Location, string Destination), float> interbodyFuelLookup;
+    public const float IntraplanetaryLaunchCost = 100f;
+    public const float OrbitalLaunchCost = 125f;
 
     public void Load(Mod mod)
     {
-        fuelLookup = new();
+        interbodyFuelLookup = new();
         PopulateTable();
     }
 
     public void Unload()
     {
-        fuelLookup = null;
+        interbodyFuelLookup = null;
+    }
+
+    public static RocketFuelRoute ResolveRoute(string location, string destination)
+    {
+        bool locationIsOrbit = OrbitSubworld.IsOrbitSubworld(location);
+        bool destinationIsOrbit = OrbitSubworld.IsOrbitSubworld(destination);
+
+        string locationParent = MacrocosmSubworld.SanitizeID(OrbitSubworld.GetParentID(location), out _);
+        string destinationParent = MacrocosmSubworld.SanitizeID(OrbitSubworld.GetParentID(destination), out _);
+
+        return new(location, destination, locationParent, destinationParent, locationIsOrbit, destinationIsOrbit);
     }
 
     public static float GetFuelCost(string location, string destination)
     {
-        location = MacrocosmSubworld.SanitizeID(OrbitSubworld.GetParentID(location), out _);
-        destination = MacrocosmSubworld.SanitizeID(OrbitSubworld.GetParentID(destination), out _);
+        RocketFuelRoute route = ResolveRoute(location, destination);
 
-        string key = location + "_" + destination;
+        if (route.Kind == RocketFuelRouteKind.Intraplanetary)
+            return IntraplanetaryLaunchCost;
 
-        if (fuelLookup.TryGetValue(key, out float value))
+        if (route.Kind == RocketFuelRouteKind.Orbital)
+            return OrbitalLaunchCost;
+
+        if (interbodyFuelLookup.TryGetValue((route.LocationParent, route.DestinationParent), out float value))
             return value;
 
         return float.MaxValue;
     }
 
     private static void Add(string locationKey, string destinationKey, float value)
-        => fuelLookup.Add(locationKey + "_" + destinationKey, value);
+        => interbodyFuelLookup.Add((locationKey, destinationKey), value);
 
     private static void PopulateTable()
     {
         // Earth 
-        Add("Earth", "Earth", 20f);
         Add("Earth", "Moon", 725f);
         Add("Earth", "Sun", 5900f);
         Add("Earth", "Mercury", 3200f);
@@ -62,7 +108,6 @@ public class RocketFuelLookup : ILoadable
         Add("Earth", "Eris", 7700f);
 
         // Moon 
-        Add("Moon", "Moon", 12f);
         Add("Moon", "Earth", 225f);
         Add("Moon", "Sun", 5800f);
         Add("Moon", "Mercury", 3100f);

@@ -393,7 +393,7 @@ TitaniumLoom: {
 }
 
 SolarPanelLarge: {
-	DisplayName: Large Solar Panel
+	DisplayName: Medium Solar Panel
 	Tooltip: Coverts solar energy into electricity
 }
 
@@ -1035,7 +1035,7 @@ OilRefinery: {
 }
 
 SolarPanelSmall: {
-	DisplayName: Solar Panel
+	DisplayName: Small Solar Panel
 	Tooltip: Converts solar energy into electricity
 }
 
@@ -1247,7 +1247,7 @@ ConstructionLight: {
 }
 
 OreExcavator: {
-	DisplayName: Ore Excavator
+	DisplayName: Tier 2 Excavator
 	Tooltip:
 		'''
 		Automatically extracts ores and resources from underground
@@ -1509,7 +1509,7 @@ WindTurbineLarge: {
 }
 
 WindTurbineSmall: {
-	DisplayName: Wind Turbine
+	DisplayName: Medium Wind Turbine
 	Tooltip: Converts wind energy into electricity
 }
 
@@ -3242,7 +3242,7 @@ StasisGrenade: {
 }
 
 AutocrafterT1: {
-	DisplayName: Autocrafter
+	DisplayName: Tier 1 Assembler
 	Tooltip:
 		'''
 		Crafts items automatically
@@ -3251,7 +3251,7 @@ AutocrafterT1: {
 }
 
 AutocrafterT2Cobalt: {
-	DisplayName: Cobalt Autocrafter
+	DisplayName: Tier 2 Assembler
 	Tooltip:
 		'''
 		Crafts items automatically
@@ -3260,7 +3260,7 @@ AutocrafterT2Cobalt: {
 }
 
 AutocrafterT2Palladium: {
-	DisplayName: Palladium Autocrafter
+	DisplayName: Tier 2 Assembler
 	Tooltip:
 		'''
 		Crafts items automatically
@@ -3269,7 +3269,7 @@ AutocrafterT2Palladium: {
 }
 
 AutocrafterT3: {
-	DisplayName: Advanced Autocrafter
+	DisplayName: Tier 3 Assembler
 	Tooltip:
 		'''
 		Crafts items automatically
@@ -3278,7 +3278,7 @@ AutocrafterT3: {
 }
 
 OreDrill: {
-	DisplayName: Ore Drill
+	DisplayName: Tier 1 Excavator
 	Tooltip:
 		'''
 		Automatically extracts ores and resources from underground
@@ -3456,7 +3456,7 @@ IndustrialBeam: {
 }
 
 AutosmelterT1: {
-	DisplayName: Autosmelter
+	DisplayName: Tier 1 Smelter
 	Tooltip:
 		'''
 		Smelts ores automatically
@@ -3465,7 +3465,7 @@ AutosmelterT1: {
 }
 
 AutosmelterT2Adamantite: {
-	DisplayName: Adamantite Autosmelter
+	DisplayName: Tier 2 Smelter
 	Tooltip:
 		'''
 		Smelts ores automatically
@@ -3474,7 +3474,7 @@ AutosmelterT2Adamantite: {
 }
 
 AutosmelterT2Titanium: {
-	DisplayName: Titanium Autosmelter
+	DisplayName: Tier 2 Smelter
 	Tooltip:
 		'''
 		Smelts ores automatically
@@ -3483,7 +3483,7 @@ AutosmelterT2Titanium: {
 }
 
 AutosmelterT3: {
-	DisplayName: Advanced Autosmelter
+	DisplayName: Tier 3 Smelter
 	Tooltip:
 		'''
 		Smelts ores automatically
@@ -3497,7 +3497,7 @@ OilBarrel: {
 }
 
 SolarPanelExtraLarge: {
-	DisplayName: Solar Panel Extra Large
+	DisplayName: Large Solar Panel
 	Tooltip: Converts solar energy into electricity
 }
 
@@ -3624,7 +3624,7 @@ IndustrialBatteryLarge: {
 }
 
 WindTurbineTiny: {
-	DisplayName: Tiny Wind Turbine
+	DisplayName: Small Wind Turbine
 	Tooltip: Converts wind energy into electricity
 }
 

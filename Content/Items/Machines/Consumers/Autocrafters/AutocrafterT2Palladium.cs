@@ -26,10 +26,8 @@ public class AutocrafterT2Palladium : ModItem
     {
         CreateRecipe()
             .AddIngredient(ItemID.PalladiumBar, 15)
-            .AddIngredient<AluminumBar>(10)
-            .AddIngredient<Gear>(4)
-            .AddIngredient<AdvancedCircuitBoard>(5)
-            .AddIngredient(ItemID.Wire, 10)
+            .AddIngredient<AdvancedCircuitBoard>(10)
+            .AddIngredient<SteelBar>(5)
             .AddTile<Fabricator>()
             .Register();
     }

@@ -1,5 +1,5 @@
 ﻿using Macrocosm.Content.Items.Bars;
-using Macrocosm.Content.Items.LiquidContainers;
+using Macrocosm.Content.Items.Tech;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -25,18 +25,9 @@ public class Pumpjack : ModItem
     public override void AddRecipes()
     {
         CreateRecipe()
-            .AddIngredient<SteelBar>(10)
-            .AddIngredient(ItemID.CopperBar, 12)
-            .AddIngredient<AluminumBar>(6)
-            .AddIngredient<Canister>(4)
-            .AddTile<Tiles.Crafting.Fabricator>()
-            .Register();
-
-        CreateRecipe()
-            .AddIngredient<SteelBar>(10)
-            .AddIngredient(ItemID.TinBar, 12)
-            .AddIngredient<AluminumBar>(6)
-            .AddIngredient<Canister>(4)
+            .AddIngredient<SteelBar>(6)
+            .AddIngredient<PrintedCircuitBoard>(5)
+            .AddIngredient<Motor>(2)
             .AddTile<Tiles.Crafting.Fabricator>()
             .Register();
     }
