@@ -514,6 +514,7 @@ public partial class LaunchPad : IInventoryOwner
         module.Rocket = Rocket;
 
         SyncLinkedAssemblyModules(module);
+        Rocket.RefreshFuelCapacity();
     }
 
     private void SyncLinkedAssemblyModules(RocketModule linkedResult)

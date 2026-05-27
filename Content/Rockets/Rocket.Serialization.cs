@@ -31,8 +31,6 @@ public partial class Rocket : TagSerializable
         if (TargetTravelPosition != default) tag[nameof(TargetTravelPosition)] = TargetTravelPosition;
 
         if (Fuel != 0f) tag[nameof(Fuel)] = Fuel;
-        if (FuelCapacity != DefaultFuelCapacity) tag[nameof(FuelCapacity)] = FuelCapacity;
-
         if (Nameplate != null) tag[nameof(Nameplate)] = Nameplate;
         if (Inventory != null) tag[nameof(Inventory)] = Inventory;
 
@@ -65,8 +63,8 @@ public partial class Rocket : TagSerializable
             TargetTravelPosition = tag.TryGet(nameof(TargetTravelPosition), out Vector2 target) ? target : Vector2.Zero,
 
             Fuel = tag.TryGet(nameof(Fuel), out float fuel) ? fuel : 0f,
-            FuelCapacity = tag.TryGet(nameof(FuelCapacity), out float fuelCapacity) ? fuelCapacity : DefaultFuelCapacity,
         };
+        rocket.RefreshFuelCapacity();
 
         if (tag.ContainsKey(nameof(Nameplate)))
             rocket.Nameplate = tag.Get<Nameplate>(nameof(Nameplate));

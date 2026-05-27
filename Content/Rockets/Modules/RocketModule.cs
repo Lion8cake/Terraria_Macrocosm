@@ -78,6 +78,7 @@ public abstract partial class RocketModule : ModTexturedType, ILocalizedModType
     public abstract int Tier { get; }
     public abstract ConfigurationType Configuration { get; }
     public abstract AssemblyRecipe Recipe { get; }
+    public virtual float FuelCapacity => 0f;
 
     public string LocalizationCategory => "UI.Rocket.Modules";
     public LocalizedText DisplayName => Language.GetOrRegister("Mods.Macrocosm.UI.Rocket.Modules." + Name + ".DisplayName", PrettyPrintName);

@@ -84,8 +84,8 @@ public partial class Rocket : IInventoryOwner
     /// <summary> The rocket's fuel capacity as an absolute value </summary>
     [NetSync] public float FuelCapacity = DefaultFuelCapacity;
 
-    /// <summary> The default fuel capacity </summary>
-    public const float DefaultFuelCapacity = 1000f;
+    /// <summary> The fallback fuel capacity before rocket modules are available </summary>
+    public const float DefaultFuelCapacity = 0f;
 
     /// <summary> The rocket's current world, "Earth" if active and not in a subworld. Other mod's subworlds have the mod name prepended </summary>
     [NetSync] public string CurrentWorld = "";
@@ -246,6 +246,14 @@ public partial class Rocket : IInventoryOwner
         }
 
         Inventory = new Inventory(DefaultTotalInventorySize, this);
+        RefreshFuelCapacity();
+    }
+
+    public void RefreshFuelCapacity()
+    {
+        float moduleFuelCapacity = Modules?.Max(m => m.FuelCapacity) ?? 0f;
+        FuelCapacity = moduleFuelCapacity > 0f ? moduleFuelCapacity : DefaultFuelCapacity;
+        Fuel = MathHelper.Clamp(Fuel, 0f, FuelCapacity);
     }
 
     private void OnFirstUpdate()

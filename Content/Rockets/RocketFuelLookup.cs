@@ -39,7 +39,7 @@ public class RocketFuelLookup : ILoadable
     {
         // Earth 
         Add("Earth", "Earth", 20f);
-        Add("Earth", "Moon", 200f);
+        Add("Earth", "Moon", 725f);
         Add("Earth", "Sun", 5900f);
         Add("Earth", "Mercury", 3200f);
         Add("Earth", "Venus", 1900f);
@@ -63,7 +63,7 @@ public class RocketFuelLookup : ILoadable
 
         // Moon 
         Add("Moon", "Moon", 12f);
-        Add("Moon", "Earth", 120f);
+        Add("Moon", "Earth", 225f);
         Add("Moon", "Sun", 5800f);
         Add("Moon", "Mercury", 3100f);
         Add("Moon", "Venus", 2000f);

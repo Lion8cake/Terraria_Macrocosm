@@ -16,6 +16,7 @@ public class EngineModuleMk1 : BaseEngineModule
 
     public override int Width => 72;
     public override int Height => 268;
+    public override float FuelCapacity => 500f;
 
     protected override Vector2? LandingLegDrawOffset => new(0, -6);
 
