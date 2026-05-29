@@ -136,8 +136,9 @@ public abstract class BaseDrillTE : ConsumerTE
                 }
                 else
                 {
-                    int drop = TileSets.DrillItemDrop[tile.TileType];
-                    SampledItems[row * w + col] = drop >= 0 ? drop : -1;
+                    DrillDropData data = TileSets.DrillDrop[tile.TileType];
+                    bool drillable = data.ItemDrop >= 0 && (data.Condition?.IsMet() ?? true);
+                    SampledItems[row * w + col] = drillable ? data.ItemDrop : -1;
                 }
             }
         }

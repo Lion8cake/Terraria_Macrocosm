@@ -6,7 +6,8 @@ using Terraria.ObjectData;
 
 namespace Macrocosm.Content.Tiles.MusicBoxes;
 
-public class DeadworldMusicBox : ModTile
+[LegacyName("DeadworldMusicBox")]
+public class MoonDayMusicBox : ModTile
 {
     public override void SetStaticDefaults()
     {
@@ -31,6 +32,6 @@ public class DeadworldMusicBox : ModTile
         Player player = Main.LocalPlayer;
         player.noThrow = 2;
         player.cursorItemIconEnabled = true;
-        player.cursorItemIconID = ModContent.ItemType<Items.MusicBoxes.DeadworldMusicBox>();
+        player.cursorItemIconID = ModContent.ItemType<Items.MusicBoxes.MoonDayMusicBox>();
     }
 }

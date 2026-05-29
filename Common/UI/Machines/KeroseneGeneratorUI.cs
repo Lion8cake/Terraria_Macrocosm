@@ -1,15 +1,18 @@
-﻿using Macrocosm.Common.Storage;
+using Macrocosm.Common.Storage;
 using Macrocosm.Common.Systems.Power;
+using Macrocosm.Common.UI;
 using Macrocosm.Common.UI.Themes;
 using Macrocosm.Content.Liquids;
 using Macrocosm.Content.Machines.Generators.Fuel;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using ModLiquidLib.ModLoader;
+using ReLogic.Content;
 using System.Collections.Generic;
 using Terraria.GameContent.UI.Elements;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using Terraria.UI;
-
 
 namespace Macrocosm.Common.UI.Machines;
 
@@ -23,6 +26,8 @@ public class KeroseneGeneratorUI : MachineUI
     private UIText rpmText;
     private UIPanelProgressBar rpmProgressBar;
     private UITextPanel<string> powerStatusText;
+    private UITextureProgressBar inputArrowProgressBar;
+    private UIHoverImageButton outputArrow;
 
     private List<UILiquidTankPiston> pistons = new();
 
@@ -42,12 +47,10 @@ public class KeroseneGeneratorUI : MachineUI
     {
         base.OnInitialize();
 
-        Width.Set(495f, 0f);
+        Width.Set(590f, 0f);
         Height.Set(330f, 0f);
 
         title.Top.Set(-36, 0);
-
-        //Recalculate();
 
         backgroundPanel = new()
         {
@@ -86,7 +89,6 @@ public class KeroseneGeneratorUI : MachineUI
         {
             HAlign = 0.5f,
             VAlign = 0.5f,
-            //Width = new(0, 0.4f - 0.01f),
         };
         rpmProgressBar.Append(rpmText);
 
@@ -102,9 +104,13 @@ public class KeroseneGeneratorUI : MachineUI
         fuelPanel.SetPadding(0f);
         backgroundPanel.Append(fuelPanel);
 
+        Asset<Texture2D> arrow = ModContent.Request<Texture2D>(Macrocosm.UIButtonsPath + "LongArrow", AssetRequestMode.ImmediateLoad);
+
         const float slotSize = 48f;
-        const float slotLeft = 28f;
-        const float slotRailWidth = 92f;
+        const float slotGap = 8f;
+        const float slotLeft = 24f;
+        const float pistonLeft = 248f;
+        const float pistonGridTop = 36f;
         const float pistonWidth = 62f;
         const float pistonHeight = 60f;
         const float pistonColumnGap = 18f;
@@ -112,18 +118,47 @@ public class KeroseneGeneratorUI : MachineUI
 
         float pistonGridWidth = 4f * pistonWidth + 3f * pistonColumnGap;
         float pistonGridHeight = 2f * pistonHeight + pistonRowGap;
+        float inputRowCenter = pistonGridTop + pistonHeight / 2f;
+        float outputRowCenter = inputRowCenter + pistonHeight + pistonRowGap;
+        float inputSlotTop = inputRowCenter - slotSize / 2f;
+        float outputSlotTop = outputRowCenter - slotSize / 2f;
+        float slotGroupRight = slotLeft + 2f * slotSize + slotGap;
+        float arrowLeft = (slotGroupRight + pistonLeft - arrow.Value.Width) / 2f;
+
+        inputArrowProgressBar = new(
+            ModContent.Request<Texture2D>(Macrocosm.UIButtonsPath + "LongArrowBorder", AssetRequestMode.ImmediateLoad),
+            ModContent.Request<Texture2D>(Macrocosm.UIButtonsPath + "LongArrowPlain", AssetRequestMode.ImmediateLoad),
+            ModContent.Request<Texture2D>(Macrocosm.UIButtonsPath + "LongArrowPlain", AssetRequestMode.ImmediateLoad)
+        )
+        {
+            Left = new(arrowLeft, 0f),
+            Top = new(inputSlotTop + (slotSize - arrow.Value.Height) / 2f, 0f),
+            BorderColor = UITheme.Current.PanelStyle.BorderColor,
+            BackgroundColor = UITheme.Current.PanelStyle.BackgroundColor,
+            FillColors = [Color.Black, new Color(157, 60, 0)],
+            FillFromRight = true
+        };
+        fuelPanel.Append(inputArrowProgressBar);
+
+        outputArrow = new(arrow, useThemeColors: true)
+        {
+            Left = new(arrowLeft, 0f),
+            Top = new(outputSlotTop + (slotSize - arrow.Value.Height) / 2f, 0f),
+            SpriteEffects = SpriteEffects.FlipHorizontally,
+            CheckInteractible = () => false
+        };
+        outputArrow.SetVisibility(1f);
+        fuelPanel.Append(outputArrow);
 
         UIElement pistonGrid = new()
         {
-            Left = new(slotRailWidth, 0f),
-            Width = new(-slotRailWidth, 1f),
-            Height = new(pistonGridHeight, 0f),
-            VAlign = 0.5f
+            Left = new(pistonLeft, 0f),
+            Top = new(pistonGridTop, 0f),
+            Width = new(pistonGridWidth, 0f),
+            Height = new(pistonGridHeight, 0f)
         };
         pistonGrid.SetPadding(0f);
         fuelPanel.Append(pistonGrid);
-
-        float pistonStartX = (495f - slotRailWidth - pistonGridWidth) / 2f;
 
         pistons = new();
         for (int row = 0; row < 2; row++)
@@ -132,10 +167,10 @@ public class KeroseneGeneratorUI : MachineUI
             {
                 var piston = new UILiquidTankPiston(LiquidLoader.LiquidType<RocketFuel>())
                 {
-                    Left = new(pistonStartX + col * (pistonWidth + pistonColumnGap), 0),
+                    Left = new(col * (pistonWidth + pistonColumnGap), 0),
                     Top = new(row * (pistonHeight + pistonRowGap), 0),
-                    Width = new(62, 0f),
-                    Height = new(60, 0f),
+                    Width = new(pistonWidth, 0f),
+                    Height = new(pistonHeight, 0f),
                     BorderColor = UITheme.Current.PanelStyle.BorderColor,
                     BackgroundColor = UITheme.Current.PanelStyle.BackgroundColor
                 };
@@ -146,15 +181,15 @@ public class KeroseneGeneratorUI : MachineUI
 
         if (KeroseneGenerator.Inventory is not null)
         {
-            int slotCount = KeroseneGenerator.Inventory.Size;
-
-            for (int i = 0; i < slotCount; i++)
+            for (int i = 0; i < KeroseneGenerator.Inventory.Size; i++)
             {
                 var inputSlot = KeroseneGenerator.Inventory.ProvideItemSlot(i, ItemSlot.Context.ChestItem);
 
-                inputSlot.Left = new(slotLeft + i * slotSize, 0f);
-                inputSlot.Top = new(0f, 0f);
-                inputSlot.VAlign = 0.5f;
+                bool outputSlot = i >= 2;
+                int column = i % 2;
+
+                inputSlot.Left = new(slotLeft + column * (slotSize + slotGap), 0f);
+                inputSlot.Top = new(outputSlot ? outputSlotTop : inputSlotTop, 0f);
                 inputSlot.SetPadding(0f);
                 fuelPanel.Append(inputSlot);
             }
@@ -171,6 +206,7 @@ public class KeroseneGeneratorUI : MachineUI
 
         float rpmProgress = KeroseneGenerator.RPMProgress;
         rpmProgressBar.Progress = rpmProgress;
+        inputArrowProgressBar.Progress = KeroseneGenerator.ConsumedItem.IsAir ? 0f : 1f - KeroseneGenerator.BurnProgress;
 
         float rpm = KeroseneGenerator.RPM;
         rpmText.SetText($"{(int)rpm} RPM");
@@ -185,5 +221,4 @@ public class KeroseneGeneratorUI : MachineUI
             pistons[i].Phase = (enginePhase + V8CrankPhaseOffsets[i]) % 1f;
         }
     }
-
 }

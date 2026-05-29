@@ -14,7 +14,7 @@ public class MoonNightBiome : ModBiome
     public override string BestiaryIcon => Macrocosm.TexturesPath + "Icons/MoonNight";
     public override string BackgroundPath => Macrocosm.TexturesPath + "MapBackgrounds/MoonNight";
     public override string MapBackground => BackgroundPath;
-    public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/Requiem");
+    public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/MoonNight");
 
     public override bool IsBiomeActive(Player player) => SubworldSystem.IsActive<Moon>() && !Main.dayTime;
 }

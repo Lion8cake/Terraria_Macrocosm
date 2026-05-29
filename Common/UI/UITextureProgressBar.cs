@@ -21,6 +21,7 @@ public class UITextureProgressBar : UIElement
     }
 
     public bool IsVertical { get; set; } = false;
+    public bool FillFromRight { get; set; } = false;
 
     public Color BorderColor { get; set; } = Color.White;
     public Color BackgroundColor { get; set; } = Color.Gray;
@@ -81,8 +82,11 @@ public class UITextureProgressBar : UIElement
                     float progressAtX = (float)x / fillWidth;
                     Color fillColorAtX = GetInterpolatedColor(progressAtX);
 
-                    Rectangle slice = new(x, 0, 1, fill.Height());
-                    Vector2 slicePosition = new(position.X + x, position.Y);
+                    int sourceX = FillFromRight ? fill.Width() - fillWidth + x : x;
+                    int destinationX = FillFromRight ? fill.Width() - fillWidth + x : x;
+
+                    Rectangle slice = new(sourceX, 0, 1, fill.Height());
+                    Vector2 slicePosition = new(position.X + destinationX, position.Y);
 
                     spriteBatch.Draw(fill.Value, slicePosition, slice, fillColorAtX);
                 }

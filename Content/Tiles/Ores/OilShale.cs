@@ -1,4 +1,5 @@
-﻿using Macrocosm.Common.Sets;
+﻿using Macrocosm.Common.DataStructures;
+using Macrocosm.Common.Sets;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -29,7 +30,7 @@ public class OilShale : ModTile
 
         MinPick = 35;
 
-        TileSets.DrillItemDrop[Type] = ModContent.ItemType<Items.Ores.OilShale>();
+        TileSets.DrillDrop[Type] = new DrillDropData(ModContent.ItemType<Items.Ores.OilShale>());
     }
 
     public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight)

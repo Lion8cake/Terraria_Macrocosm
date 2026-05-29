@@ -78,7 +78,7 @@ public partial class CrossMod : ModSystem
                         ModContent.ItemType<CraterDemonPet>(),
                         ModContent.ItemType<CraterDemonTrophy>(),
                         ModContent.ItemType<CraterDemonMask>(),
-                        ModContent.ItemType<SpaceInvaderMusicBox>()
+                        ModContent.ItemType<CraterDemonMusicBox>()
                     },
                 ["availability"] = () => true,
                 ["spawnInfo"] = ModContent.GetInstance<CraterDemon>().GetLocalization("SpawnInfo"),
@@ -106,13 +106,20 @@ public partial class CrossMod : ModSystem
     {
         if (MusicDisplay.Enabled)
         {
-            void AddMusic(string file, string name, string author) => MusicDisplay.Instance.Call("AddMusic", (short)MusicLoader.GetMusicSlot(Mod, "Assets/Music/" + file), name, "by " + author, nameof(Macrocosm));
+            void AddMusic(string file, string name, string author)
+            {
+                string credit = string.IsNullOrEmpty(author) ? "" : "by " + author;
+                MusicDisplay.Instance.Call("AddMusic", (short)MusicLoader.GetMusicSlot(Mod, "Assets/Music/" + file), name, credit, nameof(Macrocosm));
+            }
 
-            AddMusic("Deadworld", "\"Deadworld\" - Theme of the Moon (Day)", "Lincoln Ennis");
-            AddMusic("Requiem", "\"Requiem\" - Theme of the Moon (Night)", "Lincoln Ennis");
-            AddMusic("Stygia", "\"Stygia\" - Theme of the Moon (Underground)", "Lincoln Ennis");
-            AddMusic("SpaceInvader", "\"Space Invader\" - Theme of Crater Demon", "Lincoln Ennis");
-            AddMusic("IntoTheUnknown", "\"Into The Unknown\" - Macrocosm - Title Theme", "Lincoln Ennis");
+            AddMusic("MoonDay", "\"Deadworld\" - Theme of the Moon (Day)", "Lincoln Ennis");
+            AddMusic("MoonNight", "\"Requiem\" - Theme of the Moon (Night)", "Lincoln Ennis");
+            AddMusic("UndergroundMoon", "\"Stygia\" - Theme of the Moon (Underground)", "Lincoln Ennis");
+            AddMusic("CraterDemon", "\"Space Invader\" - Theme of Crater Demon", "Lincoln Ennis");
+            AddMusic("Menu", "\"Into The Unknown\" - Macrocosm Title Theme", "Lincoln Ennis");
+            AddMusic("Pollution", "\"Impurity\" - Theme of Pollution", "Thanatos");
+            AddMusic("UndergroundPollution", "\"Disposal\" - Theme of Underground Pollution", "Super (SMZ)");
+            AddMusic("MeteorStorm", "\"Collision Course\" - Theme of Meteor Storm", "Super (SMZ)");
         }
     }
 

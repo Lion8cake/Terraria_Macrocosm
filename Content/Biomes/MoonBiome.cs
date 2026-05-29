@@ -20,7 +20,7 @@ public class MoonBiome : ModBiome
     public override string BestiaryIcon => Macrocosm.TexturesPath + "Icons/Moon";
     public override string BackgroundPath => Macrocosm.TexturesPath + "MapBackgrounds/Moon";
     public override string MapBackground => BackgroundPath;
-    public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/Deadworld");
+    public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/MoonDay");
 
     public override int BiomeTorchItemType => ModContent.ItemType<LuminiteTorch>();
 

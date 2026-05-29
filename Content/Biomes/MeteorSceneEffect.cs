@@ -11,7 +11,7 @@ namespace Macrocosm.Content.Biomes;
 public class MeteorSceneEffect : ModSceneEffect
 {
     public override SceneEffectPriority Priority => SceneEffectPriority.Event;
-    public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/CollisionCourse");
+    public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/MeteorStorm");
     public override bool IsSceneEffectActive(Player player)
         => SubworldSystem.AnyActive<Macrocosm>()
         && MacrocosmSubworld.Current.SupportsMeteorStorms

@@ -1,4 +1,5 @@
-﻿using Macrocosm.Common.Sets;
+﻿using Macrocosm.Common.DataStructures;
+using Macrocosm.Common.Sets;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -30,6 +31,6 @@ public class AluminumOre : ModTile
 
         MinPick = 35;
 
-        TileSets.DrillItemDrop[Type] = ModContent.ItemType<Items.Ores.AluminumOre>();
+        TileSets.DrillDrop[Type] = new DrillDropData(ModContent.ItemType<Items.Ores.AluminumOre>());
     }
 }

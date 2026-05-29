@@ -14,7 +14,7 @@ public class TarBlob : ModNPC
 {
     public override void SetStaticDefaults()
     {
-        Main.npcFrameCount[NPC.type] = 4;
+        Main.npcFrameCount[NPC.type] = 2;
 
         NPC.ApplyBuffImmunity
         (
@@ -33,8 +33,8 @@ public class TarBlob : ModNPC
     {
         base.SetDefaults();
 
-        NPC.width = 22;
-        NPC.height = 18;
+        NPC.width = 16;
+        NPC.height = 16;
         NPC.damage = 5;
         NPC.defense = 1;
         NPC.lifeMax = 10;
@@ -86,7 +86,7 @@ public class TarBlob : ModNPC
     {
         for (int i = 0; i < 5; i++)
         {
-            int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, ModContent.DustType<CoalDust>());
+            int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, ModContent.DustType<TarDust>());
             Dust dust = Main.dust[dustIndex];
             dust.velocity.X *= dust.velocity.X * 1.25f * hit.HitDirection + Main.rand.Next(0, 100) * 0.015f;
             dust.velocity.Y *= dust.velocity.Y * 0.25f + Main.rand.Next(-50, 51) * 0.01f;

@@ -6,7 +6,8 @@ using Terraria.ObjectData;
 
 namespace Macrocosm.Content.Tiles.MusicBoxes;
 
-public class RequiemMusicBox : ModTile
+[LegacyName("IntoTheUnknownMusicBox")]
+public class MenuMusicBox : ModTile
 {
     public override void SetStaticDefaults()
     {
@@ -31,6 +32,6 @@ public class RequiemMusicBox : ModTile
         Player player = Main.LocalPlayer;
         player.noThrow = 2;
         player.cursorItemIconEnabled = true;
-        player.cursorItemIconID = ModContent.ItemType<Items.MusicBoxes.RequiemMusicBox>();
+        player.cursorItemIconID = ModContent.ItemType<Items.MusicBoxes.MenuMusicBox>();
     }
 }

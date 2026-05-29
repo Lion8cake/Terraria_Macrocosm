@@ -1157,48 +1157,75 @@ MercurianBanner: {
 	Tooltip: ""
 }
 
-DeadworldMusicBox: {
+MoonDayMusicBox: {
 	DisplayName: Music Box (Moon Day)
 	Tooltip:
 		'''
-		Plays Deadworld
-		By Lincolnennis
+		Plays "Deadworld"
+		By Lincoln Ennis
 		'''
 }
 
-RequiemMusicBox: {
+MoonNightMusicBox: {
 	DisplayName: Music Box (Moon Night)
 	Tooltip:
 		'''
-		Plays Requiem
-		By Lincolnennis
+		Plays "Requiem"
+		By Lincoln Ennis
 		'''
 }
 
-SpaceInvaderMusicBox: {
+CraterDemonMusicBox: {
 	DisplayName: Music Box (Crater Demon)
 	Tooltip:
 		'''
-		Plays Space Invader
-		By Lincolnennis
+		Plays "Space Invader"
+		By Lincoln Ennis
 		'''
 }
 
-StygiaMusicBox: {
+UndergroundMoonMusicBox: {
 	DisplayName: Music Box (Underground Moon)
 	Tooltip:
 		'''
-		Plays Stygia
-		By Lincolnennis
+		Plays "Stygia"
+		By Lincoln Ennis
 		'''
 }
 
-IntoTheUnknownMusicBox: {
+MenuMusicBox: {
 	DisplayName: Music Box (Menu)
 	Tooltip:
 		'''
-		Plays Into The Unknown
-		By Lincolnennis
+		Plays "Into The Unknown"
+		By Lincoln Ennis
+		'''
+}
+
+PollutionMusicBox: {
+	DisplayName: Music Box (Pollution)
+	Tooltip:
+		'''
+		Plays "Impurity"
+		By Thanatos
+		'''
+}
+
+UndergroundPollutionMusicBox: {
+	DisplayName: Music Box (Underground Pollution)
+	Tooltip:
+		'''
+		Plays "Disposal"
+		By Super (SMZ)
+		'''
+}
+
+MeteorStormMusicBox: {
+	DisplayName: Music Box (Meteor Storm)
+	Tooltip:
+		'''
+		Plays "Collision Course"
+		By Super (SMZ)
 		'''
 }
 
@@ -3735,5 +3762,10 @@ HeveaToilet: {
 
 HeveaWorkbench: {
 	DisplayName: Hevea Workbench
+	Tooltip: ""
+}
+
+HeveaFence: {
+	DisplayName: Hevea Fence
 	Tooltip: ""
 }

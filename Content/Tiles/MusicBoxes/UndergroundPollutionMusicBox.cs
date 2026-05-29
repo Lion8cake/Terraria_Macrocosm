@@ -6,7 +6,7 @@ using Terraria.ObjectData;
 
 namespace Macrocosm.Content.Tiles.MusicBoxes;
 
-public class SpaceInvaderMusicBox : ModTile
+public class UndergroundPollutionMusicBox : ModTile
 {
     public override void SetStaticDefaults()
     {
@@ -23,7 +23,7 @@ public class SpaceInvaderMusicBox : ModTile
 
         DustType = -1;
 
-        AddMapEntry(new Color(161, 167, 146), CreateMapEntryName());
+        AddMapEntry(new Color(223, 192, 76), CreateMapEntryName());
     }
 
     public override void MouseOver(int i, int j)
@@ -31,6 +31,6 @@ public class SpaceInvaderMusicBox : ModTile
         Player player = Main.LocalPlayer;
         player.noThrow = 2;
         player.cursorItemIconEnabled = true;
-        player.cursorItemIconID = ModContent.ItemType<Items.MusicBoxes.SpaceInvaderMusicBox>();
+        player.cursorItemIconID = ModContent.ItemType<Items.MusicBoxes.UndergroundPollutionMusicBox>();
     }
 }

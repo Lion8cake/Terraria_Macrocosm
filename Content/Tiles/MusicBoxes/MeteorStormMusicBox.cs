@@ -6,7 +6,7 @@ using Terraria.ObjectData;
 
 namespace Macrocosm.Content.Tiles.MusicBoxes;
 
-public class IntoTheUnknownMusicBox : ModTile
+public class MeteorStormMusicBox : ModTile
 {
     public override void SetStaticDefaults()
     {
@@ -23,7 +23,7 @@ public class IntoTheUnknownMusicBox : ModTile
 
         DustType = -1;
 
-        AddMapEntry(new Color(16, 134, 233), CreateMapEntryName());
+        AddMapEntry(new Color(223, 192, 76), CreateMapEntryName());
     }
 
     public override void MouseOver(int i, int j)
@@ -31,6 +31,6 @@ public class IntoTheUnknownMusicBox : ModTile
         Player player = Main.LocalPlayer;
         player.noThrow = 2;
         player.cursorItemIconEnabled = true;
-        player.cursorItemIconID = ModContent.ItemType<Items.MusicBoxes.IntoTheUnknownMusicBox>();
+        player.cursorItemIconID = ModContent.ItemType<Items.MusicBoxes.MeteorStormMusicBox>();
     }
 }

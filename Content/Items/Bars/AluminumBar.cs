@@ -28,15 +28,13 @@ public class AluminumBar : ModItem
         Item.createTile = TileType<Tiles.Bars.AluminumBar>();
         Item.placeStyle = 0;
         Item.rare = ItemRarityID.White;
-
-        // Set other Item.X values here
     }
 
     public override void AddRecipes()
     {
         CreateRecipe()
         .AddIngredient<AluminumOre>(4)
-        .AddTile(TileID.Anvils)
+        .AddTile(TileID.Furnaces)
         .Register();
     }
 }

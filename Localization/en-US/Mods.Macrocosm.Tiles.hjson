@@ -61,11 +61,14 @@ PrintedCircuitBoard.MapEntry: Circuit Board
 IndustrialLocker.MapEntry: Industrial Locker
 OxygenSystem.MapEntry: Oxygen System
 MercurianBanner.MapEntry: Mercurian Banner
-DeadworldMusicBox.MapEntry: Music Box (Deadworld)
-RequiemMusicBox.MapEntry: Music Box (Requiem)
-SpaceInvaderMusicBox.MapEntry: Music Box (Space Invader)
-StygiaMusicBox.MapEntry: Music Box (Stygia)
-IntoTheUnknownMusicBox.MapEntry: Music Box (Into The Unknown)
+MoonDayMusicBox.MapEntry: Music Box (Moon Day)
+MoonNightMusicBox.MapEntry: Music Box (Moon Night)
+CraterDemonMusicBox.MapEntry: Music Box (Crater Demon)
+UndergroundMoonMusicBox.MapEntry: Music Box (Underground Moon)
+MenuMusicBox.MapEntry: Music Box (Menu)
+PollutionMusicBox.MapEntry: Music Box (Pollution)
+UndergroundPollutionMusicBox.MapEntry: Music Box (Underground Pollution)
+MeteorStormMusicBox.MapEntry: Music Box (Meteor Storm)
 EarthGlobe.MapEntry: Earth Globe
 PowerJunction.MapEntry: Power Junction
 Computer.MapEntry: Computer

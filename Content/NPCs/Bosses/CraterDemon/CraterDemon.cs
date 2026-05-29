@@ -464,7 +464,7 @@ public class CraterDemon : ModNPC
         NPC.BossBar = ModContent.GetInstance<CraterDemonBossBar>();
 
         if (!Main.dedServ)
-            Music = MusicLoader.GetMusicSlot(Mod, "Assets/Music/SpaceInvader");
+            Music = MusicLoader.GetMusicSlot(Mod, "Assets/Music/CraterDemon");
     }
 
     public override bool CanBeHitByNPC(NPC attacker)

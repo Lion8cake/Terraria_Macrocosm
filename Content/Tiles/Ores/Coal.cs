@@ -1,4 +1,5 @@
-﻿using Macrocosm.Common.Sets;
+﻿using Macrocosm.Common.DataStructures;
+using Macrocosm.Common.Sets;
 using Macrocosm.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -26,6 +27,6 @@ public class Coal : ModTile
 
         MinPick = 35;
 
-        TileSets.DrillItemDrop[Type] = ModContent.ItemType<Items.Ores.Coal>();
+        TileSets.DrillDrop[Type] = new DrillDropData(ModContent.ItemType<Items.Ores.Coal>());
     }
 }

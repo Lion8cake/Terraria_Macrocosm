@@ -57,7 +57,7 @@ class EarthWorldGen : ModSystem
     private void GenerateCoal(GenerationProgress progress, GameConfiguration configuration)
     {
         for (int i = 0; i < (int)(Main.maxTilesX * Main.maxTilesY * 0.00016); i++)
-            WorldGen.TileRunner(WorldGen.genRand.Next(0, Main.maxTilesX), WorldGen.genRand.Next((int)GenVars.rockLayerLow, Main.maxTilesY), WorldGen.genRand.Next(5, 10), WorldGen.genRand.Next(5, 10), TileType<Coal>());
+            WorldGen.TileRunner(WorldGen.genRand.Next(0, Main.maxTilesX), WorldGen.genRand.Next((int)Main.worldSurface, Main.maxTilesY), WorldGen.genRand.Next(5, 10), WorldGen.genRand.Next(5, 10), TileType<Coal>());
     }
 
     private void GenerateOilShales(GenerationProgress progress, GameConfiguration configuration)

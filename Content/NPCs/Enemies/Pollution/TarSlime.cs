@@ -14,7 +14,7 @@ public class TarSlime : ModNPC
 {
     public override void SetStaticDefaults()
     {
-        Main.npcFrameCount[NPC.type] = 6;
+        Main.npcFrameCount[NPC.type] = 2;
 
         NPC.ApplyBuffImmunity
         (
@@ -33,7 +33,7 @@ public class TarSlime : ModNPC
     {
         base.SetDefaults();
 
-        NPC.width = 44;
+        NPC.width = 34;
         NPC.height = 30;
         NPC.damage = 10;
         NPC.defense = 2;
@@ -63,25 +63,15 @@ public class TarSlime : ModNPC
     }
     public override void FindFrame(int frameHeight)
     {
-        int frameSpeed = 6;
+        const int frameSpeed = 6;
 
-        if (NPC.collideY || NPC.velocity.Y == 0)
+        NPC.rotation = 0;
+        if (NPC.frameCounter++ >= frameSpeed)
         {
-            NPC.rotation = 0;
-            if (NPC.frameCounter++ >= frameSpeed)
-            {
-                NPC.frameCounter = 0;
-                NPC.frame.Y += frameHeight;
-                if (NPC.frame.Y > 3 * frameHeight)
-                    NPC.frame.Y = 0;
-            }
-        }
-        else
-        {
-            if (NPC.velocity.Y > 0)
-                NPC.frame.Y = 4 * frameHeight;
-            if (NPC.velocity.Y < 0)
-                NPC.frame.Y = 5 * frameHeight;
+            NPC.frameCounter = 0;
+            NPC.frame.Y += frameHeight;
+            if (NPC.frame.Y >= Main.npcFrameCount[Type] * frameHeight)
+                NPC.frame.Y = 0;
         }
     }
 
@@ -101,7 +91,7 @@ public class TarSlime : ModNPC
         }
         for (int i = 0; i < 10; i++)
         {
-            int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, ModContent.DustType<CoalDust>());
+            int dustIndex = Dust.NewDust(NPC.position, NPC.width, NPC.height, ModContent.DustType<TarDust>());
             Dust dust = Main.dust[dustIndex];
             dust.velocity.X *= dust.velocity.X * 1.25f * hit.HitDirection + Main.rand.Next(0, 100) * 0.015f;
             dust.velocity.Y *= dust.velocity.Y * 0.25f + Main.rand.Next(-50, 51) * 0.01f;

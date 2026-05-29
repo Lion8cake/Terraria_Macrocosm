@@ -19,7 +19,7 @@ public class MoonUndergroundBiome : ModBiome
     public override string BestiaryIcon => Macrocosm.TexturesPath + "Icons/MoonUnderground";
     public override string BackgroundPath => Macrocosm.TexturesPath + "MapBackgrounds/MoonUnderground";
     public override string MapBackground => BackgroundPath;
-    public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/Stygia");
+    public override int Music => MusicLoader.GetMusicSlot(Mod, "Assets/Music/UndergroundMoon");
 
     public override void SetStaticDefaults()
     {

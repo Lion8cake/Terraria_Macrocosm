@@ -1,4 +1,5 @@
-﻿using Macrocosm.Common.Sets;
+﻿using Macrocosm.Common.DataStructures;
+using Macrocosm.Common.Sets;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -29,6 +30,6 @@ public class LithiumOre : ModTile
 
         MinPick = 45;
 
-        TileSets.DrillItemDrop[Type] = ModContent.ItemType<Items.Ores.LithiumOre>();
+        TileSets.DrillDrop[Type] = new DrillDropData(ModContent.ItemType<Items.Ores.LithiumOre>());
     }
 }

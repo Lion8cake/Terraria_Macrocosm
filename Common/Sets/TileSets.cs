@@ -1,5 +1,7 @@
-﻿using Terraria;
+﻿using Macrocosm.Common.DataStructures;
+using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.GameContent;
 
@@ -29,37 +31,41 @@ internal class TileSets
     public static int[] RandomStyles { get; } = TileID.Sets.Factory.CreateIntSet(defaultState: 1);
 
     /// <summary>
-    /// Maps tile types to the item ID they yield when mined by a drill/excavator.
-    /// -1 (default) means the tile is not drillable.
-    /// Vanilla entries are registered inline below; modded ore tiles register themselves in their <c>SetStaticDefaults</c>.
+    /// Maps tile types to their drill drop data: item yielded and an optional world-state condition.
+    /// Default (unregistered) = <see cref="DrillDropData.None"/> (not drillable).
+    /// Vanilla entries are registered inline; modded ore tiles register themselves in their <c>SetStaticDefaults</c>.
     /// </summary>
-    public static int[] DrillItemDrop { get; } = TileID.Sets.Factory.CreateNamedSet(nameof(DrillItemDrop)).Description("Maps tile types to the item they yield when drilled. -1 = not drillable.").RegisterIntSet(defaultState: -1,
+    public static DrillDropData[] DrillDrop { get; } = TileID.Sets.Factory.CreateNamedSet(nameof(DrillDrop)).Description("Per-tile drill drop item and optional unlock condition.").RegisterCustomSet<DrillDropData>(defaultState: DrillDropData.None,
         // Terrain
-        TileID.Stone,        ItemID.StoneBlock,
-        // Tier 1 ores
-        TileID.Copper,       ItemID.CopperOre,
-        TileID.Tin,          ItemID.TinOre,
-        TileID.Iron,         ItemID.IronOre,
-        TileID.Lead,         ItemID.LeadOre,
-        TileID.Silver,       ItemID.SilverOre,
-        TileID.Tungsten,     ItemID.TungstenOre,
-        TileID.Gold,         ItemID.GoldOre,
-        TileID.Platinum,     ItemID.PlatinumOre,
+        TileID.Stone,        new DrillDropData(ItemID.StoneBlock),
+        // Pre-hardmode ores — no condition
+        TileID.Copper,       new DrillDropData(ItemID.CopperOre),
+        TileID.Tin,          new DrillDropData(ItemID.TinOre),
+        TileID.Iron,         new DrillDropData(ItemID.IronOre),
+        TileID.Lead,         new DrillDropData(ItemID.LeadOre),
+        TileID.Silver,       new DrillDropData(ItemID.SilverOre),
+        TileID.Tungsten,     new DrillDropData(ItemID.TungstenOre),
+        TileID.Gold,         new DrillDropData(ItemID.GoldOre),
+        TileID.Platinum,     new DrillDropData(ItemID.PlatinumOre),
         // Evil ores
-        TileID.Demonite,     ItemID.DemoniteOre,
-        TileID.Crimtane,     ItemID.CrimtaneOre,
+        TileID.Demonite,     new DrillDropData(ItemID.DemoniteOre),
+        TileID.Crimtane,     new DrillDropData(ItemID.CrimtaneOre),
         // Special
-        TileID.Meteorite,    ItemID.Meteorite,
-        TileID.Hellstone,    ItemID.Hellstone,
-        // Hardmode ores
-        TileID.Cobalt,       ItemID.CobaltOre,
-        TileID.Palladium,    ItemID.PalladiumOre,
-        TileID.Mythril,      ItemID.MythrilOre,
-        TileID.Orichalcum,   ItemID.OrichalcumOre,
-        TileID.Adamantite,   ItemID.AdamantiteOre,
-        TileID.Titanium,     ItemID.TitaniumOre,
-        // Post-HM
-        TileID.Chlorophyte,  ItemID.ChlorophyteOre,
-        TileID.LunarOre,     ItemID.LunarOre
+        TileID.Meteorite,    new DrillDropData(ItemID.Meteorite),
+        TileID.Hellstone,    new DrillDropData(ItemID.Hellstone),
+        // Biome stone
+        TileID.MarbleBlock,  new DrillDropData(ItemID.Marble),
+        TileID.GraniteBlock, new DrillDropData(ItemID.Granite),
+        // Hardmode ores — require hardmode
+        TileID.Cobalt,       new DrillDropData(ItemID.CobaltOre,     Condition.Hardmode),
+        TileID.Palladium,    new DrillDropData(ItemID.PalladiumOre,  Condition.Hardmode),
+        TileID.Mythril,      new DrillDropData(ItemID.MythrilOre,    Condition.Hardmode),
+        TileID.Orichalcum,   new DrillDropData(ItemID.OrichalcumOre, Condition.Hardmode),
+        TileID.Adamantite,   new DrillDropData(ItemID.AdamantiteOre, Condition.Hardmode),
+        TileID.Titanium,     new DrillDropData(ItemID.TitaniumOre,   Condition.Hardmode),
+        // Chlorophyte — post-Plantera only
+        TileID.Chlorophyte,  new DrillDropData(ItemID.ChlorophyteOre, Condition.DownedPlantera),
+        // LunarOre — post-Moon Lord only
+        TileID.LunarOre,     new DrillDropData(ItemID.LunarOre,       Condition.DownedMoonLord)
     );
 }
